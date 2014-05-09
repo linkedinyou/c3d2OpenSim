@@ -1,4 +1,4 @@
-function printTRC(mkrData, sampleRate,trialName,dataPath)
+function printTRC(mkrData,sampleRate,trialName)
 % printTRC() Printes a structure of Mkr Data to TRC format
 %   mkrData, 
 %   sampleRate,
@@ -9,14 +9,11 @@ function printTRC(mkrData, sampleRate,trialName,dataPath)
 %   Author: J.J. Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
 
 %% Pre- allocate some arrays and set some index values
-mkNameArray  =   [];
-fields       = fieldnames(mkrData(1));
-nMarkers     =   length(fields);
-markerArray  =   [];
-
-
-
-
+mkNameArray  = [];
+fields       = fieldnames(mkrData);
+nMarkers     = length(fields);
+markerArray  = [];
+[pathstr, name, ext] = fileparts(trialName);
 
 % Dump out all the mkr names and Data 
 for i = 1 : nMarkers
@@ -26,26 +23,26 @@ for i = 1 : nMarkers
         eval(['markerArray(:,(3*i)-2:(3*i)) = mkrData.' char(fields(i)) ';' ] )
 end
 
-[nFrames n]           = size(markerArray);
+[nFrames n] =   size(markerArray);
 
 % Create Arrays for Frame and Time 
 frameArray  =   [0:nFrames-1]';                % Create frame Number array
 timeArray   =   (frameArray)/sampleRate;       % Create time array
     
 % create the final array of data for printing 
-trcData=[frameArray timeArray markerArray];
+trcData     =   [frameArray timeArray markerArray];
 
 
 %% Print Data 
 
 % Output the data to a csv file
-    trcFileName     = fullfile(dataPath, [trialName '.trc']);
+    trcFileName     = fullfile(pathstr, [name '.trc']);
     fid             = fopen(trcFileName,'w');
     
     fprintf('\n      Printing marker trajectory file     ');
     
     % Print header information
-    fprintf(fid,'PathFileType\t4\t(X/Y/Z)\t%s\n',trialName);
+    fprintf(fid,'PathFileType\t4\t(X/Y/Z)\t%s\n',name);
     fprintf(fid,'dataRate\tCameraRate\tNumFrames\tNumMarkers\tUnits\tOrigdataRate\tOrigdataStartFrame\tOrigNumFrames\n');
     fprintf(fid,'%d\t%d\t%d\t%d\tmm\t%d\t%d\t%d\n',sampleRate,sampleRate,nFrames,nMarkers,sampleRate,0,n);
     fprintf(fid,'Frame#\tTime');
@@ -65,7 +62,7 @@ trcData=[frameArray timeArray markerArray];
     % Print the data
     fmt3=[repmat(' %2.6g\t',1,3*nMarkers+2) '\n']; 
     for i   = 1:nFrames
-            fprintf(fid,fmt3,trcData(i,:));    % print a row's of Mkr Data
+            fprintf(fid,fmt3,trcData(i,:));    % print row of Mkr Data
     end
             
     fclose(fid);

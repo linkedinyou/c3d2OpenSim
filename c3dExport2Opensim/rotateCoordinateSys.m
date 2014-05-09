@@ -1,23 +1,24 @@
-function [rotatedMkrStruct rotationMatrix] = rotateCoordinateSys(mkrStruct, rotAxis, Rot1)
-%% rotateCoordinateSys()
-%    Rotates data 
-
+function [nData] = rotateCoordinateSys(oData, rotAxis, Rot)
+% rotateCoordinateSys()
+% Rotates xyz data about an axis. Data is assumed to be an nx3 sized array.
+% Examples would be the xyz coordinates of a marker or the xyz components
+% of a ground reaction force. 
+% This code was originally build to rotate lab coorindates that use an
+% "Z is up" right handed coordinate system to a "Y is up" right handed 
+% coordinate system. This was expanded to be able to rotate any global data
+% frame. The rotation matrices represent a CLOCKWISE rotation relative
+% to fixed coordinate axes, by an angle of Rot. 
+% 
+% Input - oData - strucutre format containing matrix data 
+%                 eg oData.LASI = [nx3]
+%         rotAxis - string denoting which axis the rotation  will be around 
+%                   eg rotAxis = 'x'
+%         Rot   - The rotation about rotAxis in degrees
+%                 eg Rot = 90
+%
+% Output - nData - structure format containing rotated matrix data
+%
 % Author: Cyril J Donnelly, James Dunne, Thor Besier.  
-% Written: March, 2009. Updated: Dec,2013
-    
-    % If the 3D space is oriented in the usual way,
-    % i.e. x going to the front, y going to the right and z going up
-    % These matrices represent CLOCKWISE rotations of an object relative
-    % to fixed coordinate axes, by an angle of Rot1. 
-    
-    
-    % The direction of the rotation is as follows:
-    % Rx 90 rotates the y-axis towards the z-axis (RotAboutX_90 = [1,0,0;0,0,-1;0,1,0];)
-    % Ry 90 rotates the z-axis towards the x-axis (RotAboutY_90 = [0,0,1;0,1,0;-1,0,0];)
-    % Rz 90 rotates the x-axis towards the y-axis (RotAboutZ_90 =
-    % [0,-1,0;1,0,0;0,0,1];)
-    
-
     
 %%  Determine the coordinate to rotate around   
 if     nargin < 3
@@ -25,10 +26,10 @@ if     nargin < 3
     rotationMatrix = rotAxis;
    
 elseif nargin == 3
- % Create roation matrices according to Rot1 (degrees)   
-    RotAboutX1 = [1,0,0;0,cos(Rot1*pi/180),-(sin(Rot1*pi/180));0,sin(Rot1*pi/180),cos(Rot1*pi/180)];
-    RotAboutY1 = [cos(Rot1*pi/180),0,sin(Rot1*pi/180);0,1,0;-(sin(Rot1*pi/180)),0,cos(Rot1*pi/180)];
-    RotAboutZ1 = [cos(Rot1*pi/180),-(sin(Rot1*pi/180)),0;sin(Rot1*pi/180),cos(Rot1*pi/180),0;0,0,1];
+ % Create roation matrices according to Rot (degrees)   
+    RotAboutX1 = [1,0,0;0,cos(Rot*pi/180),-(sin(Rot*pi/180));0,sin(Rot*pi/180),cos(Rot*pi/180)];
+    RotAboutY1 = [cos(Rot*pi/180),0,sin(Rot*pi/180);0,1,0;-(sin(Rot*pi/180)),0,cos(Rot*pi/180)];
+    RotAboutZ1 = [cos(Rot*pi/180),-(sin(Rot*pi/180)),0;sin(Rot*pi/180),cos(Rot*pi/180),0;0,0,1];
   % choose which rotation matrix to use based on user input 
     if     strcmpi(rotAxis,'x') 
             rotationMatrix = RotAboutX1;
@@ -39,26 +40,19 @@ elseif nargin == 3
     end
 end    
     
-%% Multiple all valid arrays by the rotation matrix  
-    nMkrs   = length(mkrStruct);
-    fields  = fieldnames(mkrStruct(1));
-    nFields = length(fields);
+%% Rotate nx3 arrays by the rotation matrix  
+fields  = fieldnames(oData);
+nFields = length(fields);
+nData = oData;
 
-    for i = 1:nMkrs
-         for u = 1:nFields
-            % assign the strucutre field to data 
-            eval(['data = mkrStruct(i).' char(fields(u)) ';' ])
-            % if data is an array, rather than a string
-            if ~ischar(data) 
-                % Rotate the data
-                  rotateData = [rotationMatrix'*data']';
-                % assign the rotated datae back to field  
-                 eval(['mkrStruct(i).' char(fields(u)) ' = rotateData ;' ]) ;  
-            end
-            
-         end
-    end
+for i = 1:nFields
+        % assign the strucutre field to data 
+        vectorData = oData.(fields{i});
+        % Rotate the data
+        rotatedData = [rotationMatrix'*vectorData']';
+        % assign the rotated data back to field  
+        nData.(fields{i}) = rotatedData;  
+end
     
-    rotatedMkrStruct = mkrStruct;
 end
 

@@ -43,8 +43,6 @@ function [forceStruct] = c3dPecsForceData(nFP,hTrial)
                             'cop',{COP'},                       ...
                             'corners',{dimensionArray});
      
-                        
-                        
                         release(hFP);
                 end
                 

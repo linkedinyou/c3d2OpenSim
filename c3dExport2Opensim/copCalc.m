@@ -1,4 +1,4 @@
-function [newForceStruct] = copCalc(forceStruct)
+function [structData] = copCalc(structData)
 %Calculates the COP for force and moment data from in ground forceplates
 %%   
 %            
@@ -6,34 +6,31 @@ function [newForceStruct] = copCalc(forceStruct)
 % Cell(n,1)= XYZ coodinates of forceplate corner1 (should be four cells
 % four each forceplate. n represents the row/number of forceplates in trial
 %         
-nFplates = length(forceStruct);
 
-for u = 1:nFplates
+for i = 1 : length(structData.fp_data.GRF_data)
         
-    
-    % Place these data into their variable Name. This is slower but is
+        % Place these data into their variable Name. This is slower but is
         % easier to read and make ajustments later
-        fx = forceStruct(u).force(:,1);
-        fy = forceStruct(u).force(:,2);
-        fz = forceStruct(u).force(:,3);
-        mx = forceStruct(u).moment(:,1);
-        my = forceStruct(u).moment(:,2);
-        mz = forceStruct(u).moment(:,3);
         
-        
-        %% Process the grf data to get the correct cop results.
-            % This is a while loop. With each cycle you will be able to
-            % pick the points on the fz plot which you want to use for
-            % processing. The edges of the forceplate will then be plotted
-            % against the calculated COP. A input selection will appear in
-            % matlab allowing the input of either 'n' or 'y'. 'n' repeats
-            % the cycle while 'y' accepts the data and moves on.
-            
-        for i = 1:4
-            xCorners(i)=forceStruct(u).corners(i,1); % create matrix with X coordinates
-            yCorners(i)=forceStruct(u).corners(i,2); % create matrix with Y coordinates
-        end
+%         fx = structData.fp_data.GRF_data(i).F(:,1);
+%         fy = structData.fp_data.GRF_data(i).F(:,2);
+%         fz = structData.fp_data.GRF_data(i).F(:,3);
+%         mx = structData.fp_data.GRF_data(i).M(:,1);
+%         my = structData.fp_data.GRF_data(i).M(:,2);
+%         mz = structData.fp_data.GRF_data(i).M(:,3);
 
+        
+        eval([' fx = -structData.analog_data.Channels.Fx' num2str(i) '(:,1);']);
+        eval([' fy = structData.analog_data.Channels.Fy' num2str(i) '(:,1);']);
+        eval([' fz = -structData.analog_data.Channels.Fz' num2str(i) '(:,1);']);
+        eval([' mx = -structData.analog_data.Channels.Mx' num2str(i) '(:,1);']);
+        eval([' my = structData.analog_data.Channels.My' num2str(i) '(:,1);']);
+        eval([' mz = -structData.analog_data.Channels.Mz' num2str(i) '(:,1);']);
+        
+        % Dump out the forceplate X&Y coordinates
+        xCorners = structData.fp_data.FP_data(i).corners(1,:);
+        yCorners = structData.fp_data.FP_data(i).corners(2,:); 
+        
         % Find Closest Xcorner
         xCorner = min(xCorners);
         xlength = max(xCorners)-min(xCorners);
@@ -41,16 +38,18 @@ for u = 1:nFplates
         yCorner = min(yCorners);
         ylength = max(yCorners)-min(yCorners);
 
-
-        h = forceStruct(u).corners(1,3);
-         if h == 0
+        % get the height of the forceplate below ground
+        h = structData.fp_data.FP_data(i).corners(3,1);
+        if h == 0
             h  = 1;
-         end
-         
+        end
+
+        % Calculate the COP from the forces and moments
         COPx = (xCorner+(0.5*xlength))+((-h*fx - my)./fz);
         COPy = abs(-1*(yCorner+(0.5*ylength))+((-h*fy - mx)./fz));
         COPz = zeros(length(COPx),1);
               
+        % Calculate the free moment (Tz) of the forceplate
         a  =  mz;
         b  =  fy.*(COPx-xlength/2);
         c  =  (COPy-ylength/2).*fx;
@@ -60,20 +59,20 @@ for u = 1:nFplates
         Ty = Tx;
             
         % take out any Nans
-         for j=1:length(COPx)
-            if isnan(COPx(j))==1 | isinf(COPx(j))==1 %#ok<OR2>
-                COPx(j)=0;
-                COPy(j)=0;
-                Tz(j)=0;
-            end
-         end
+        nNaN    = find(isnan(COPx));
+        COPx(nNaN) = 0;
+        COPy(nNaN) = 0;
+        Tz(nNaN)   = 0;
+
+        % Plot the calculated COP vs the original COP
+        hold on 
+        plot(structData.fp_data.GRF_data(i).P,'k')
+        plot(COPy,'r')
+        plot(COPx,'r')
 
         % save the processed COP to the structure
-        forceStruct(u).cop    = [COPx COPy COPz];  
-        % save the processed COP to the structure
-        forceStruct(u).moment = [zeros(length(Tz),1) Tz zeros(length(Tz),1)];
+        structData.fp_data.GRF_data(i).P(:,1:2) = [COPx COPy];  
          
 end
-        % save the processed COP to the structure
-        newForceStruct = forceStruct; 
+       
 end
