@@ -9,7 +9,7 @@ function [nData] = rotateCoordinateSys(oData, rotAxis, Rot)
 % frame. The rotation matrices represent a CLOCKWISE rotation relative
 % to fixed coordinate axes, by an angle of Rot. 
 % 
-% Input - oData - strucutre format containing matrix data 
+% Input - oData - either a nX3 matrix or a strucutre containing matrix variables 
 %                 eg oData.LASI = [nx3]
 %         rotAxis - string denoting which axis the rotation  will be around 
 %                   eg rotAxis = 'x'
@@ -41,18 +41,22 @@ elseif nargin == 3
 end    
     
 %% Rotate nx3 arrays by the rotation matrix  
-fields  = fieldnames(oData);
-nFields = length(fields);
-nData = oData;
+if isstruct(oData)
+    fields  = fieldnames(oData);
+    nFields = length(fields);
+    nData = oData;
 
-for i = 1:nFields
-        % assign the strucutre field to data 
-        vectorData = oData.(fields{i});
-        % Rotate the data
-        rotatedData = [rotationMatrix'*vectorData']';
-        % assign the rotated data back to field  
-        nData.(fields{i}) = rotatedData;  
-end
+    for i = 1:nFields
+            % assign the strucutre field to data 
+            vectorData = oData.(fields{i});
+            % Rotate the data
+            rotatedData = [rotationMatrix'*vectorData']';
+            % assign the rotated data back to field  
+            nData.(fields{i}) = rotatedData;  
+    end
+else
+    % Data is a n*3 matrix
+    nData = [rotationMatrix'*oData']';
     
 end
 
