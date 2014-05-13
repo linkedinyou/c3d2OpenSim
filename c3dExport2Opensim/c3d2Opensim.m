@@ -86,7 +86,7 @@ for i = 1 : nFP
 end
 
 %% Change the forces from a forceplate allocation to a body allocation
-structData.bodyForce_data = connectBody2Forces(structData);
+structData.bodyForce_data = connectForces2Bodies(structData);
 
 %% Convert COP into meters rather than mm
 for i = 1 : nFP
