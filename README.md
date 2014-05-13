@@ -3,15 +3,13 @@ motionProcessing
 Matlab code for processing c3d motion data and modeling using the OpenSim API. 
 
 
-# Acknowledgements # 
+## Acknowledgements ##
 
 First, we would like to acknowledge Arnaud Barre and Stephane Arman for their wonderful BTK (Biomechanical Toolkit) software, which is used for c3d reading. We are sure that we are not leveraging it as much as we could. Please support the btk project. The matlab (64-bit tested) binaries can be downloaded from here; https://code.google.com/p/b-tk/wiki/MatlabBinaries
 
 We would also like to acknowledge Thor Besier (U Ackland), Cyril Donnelly (U Western Australia) and Glen Litchwark for their significant code contributions to the c3d2OpenSim pipeline. 
 
 ## Software and Documentation ##
-
-
 
 This uses the btk_matlab c3d reading function (https://code.google.com/p/b-tk/) in aid of converting c3d file formats to opensim ready formats
 
