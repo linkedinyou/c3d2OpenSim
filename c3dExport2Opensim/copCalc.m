@@ -12,21 +12,13 @@ for i = 1 : length(structData.fp_data.GRF_data)
         % Place these data into their variable Name. This is slower but is
         % easier to read and make ajustments later
         
-%         fx = structData.fp_data.GRF_data(i).F(:,1);
-%         fy = structData.fp_data.GRF_data(i).F(:,2);
-%         fz = structData.fp_data.GRF_data(i).F(:,3);
-%         mx = structData.fp_data.GRF_data(i).M(:,1);
-%         my = structData.fp_data.GRF_data(i).M(:,2);
-%         mz = structData.fp_data.GRF_data(i).M(:,3);
+        fx = structData.fp_data.GRF_data(i).F(:,1);
+        fy = structData.fp_data.GRF_data(i).F(:,2);
+        fz = structData.fp_data.GRF_data(i).F(:,3);
+        mx = structData.fp_data.GRF_data(i).M(:,1);
+        my = structData.fp_data.GRF_data(i).M(:,2);
+        mz = structData.fp_data.GRF_data(i).M(:,3);
 
-        
-        eval([' fx = -structData.analog_data.Channels.Fx' num2str(i) '(:,1);']);
-        eval([' fy = structData.analog_data.Channels.Fy' num2str(i) '(:,1);']);
-        eval([' fz = -structData.analog_data.Channels.Fz' num2str(i) '(:,1);']);
-        eval([' mx = -structData.analog_data.Channels.Mx' num2str(i) '(:,1);']);
-        eval([' my = structData.analog_data.Channels.My' num2str(i) '(:,1);']);
-        eval([' mz = -structData.analog_data.Channels.Mz' num2str(i) '(:,1);']);
-        
         % Dump out the forceplate X&Y coordinates
         xCorners = structData.fp_data.FP_data(i).corners(1,:);
         yCorners = structData.fp_data.FP_data(i).corners(2,:); 
@@ -63,15 +55,19 @@ for i = 1 : length(structData.fp_data.GRF_data)
         COPx(nNaN) = 0;
         COPy(nNaN) = 0;
         Tz(nNaN)   = 0;
-
+        
         % Plot the calculated COP vs the original COP
-        hold on 
-        plot(structData.fp_data.GRF_data(i).P,'k')
-        plot(COPy,'r')
-        plot(COPx,'r')
+%         hold on 
+%         plot(structData.fp_data.GRF_data(i).P,'k')
+%         plot(COPy,'b')
+%         plot(COPx,'b')
 
+        % back up the original COP in the struct
+        structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
         % save the processed COP to the structure
         structData.fp_data.GRF_data(i).P(:,1:2) = [COPx COPy];  
+        % save the processed Z torque to the structure
+        structData.fp_data.GRF_data(i).M = [Tx Ty Tz];  
          
 end
        

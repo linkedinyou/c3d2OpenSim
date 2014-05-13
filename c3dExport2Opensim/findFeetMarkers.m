@@ -1,4 +1,4 @@
-function [markerSideNames] = findFeetMarkers(structData)
+function [markerSideNames] = findFeetMarkers(structData, nFootMkr)
 %findFeetMarkers() finds the feet marker label strings
 %   Function takes a markers (from a data structure) and searches
 %   through the marker data to find the markers with the lowest vertical
@@ -13,15 +13,15 @@ function [markerSideNames] = findFeetMarkers(structData)
 %                      eg ['RMT1' 'RMT2' 'RCAL' 'LMT1' 'LMT2' 'LCAL']
 
 
-% designate how many mkrs on each foot
-nFMkrs = 6;
+% How many total foot markers to look for
+nFMkrs = 2* nFootMkr;
 
 % Get the marker struct from the overall data struct
 markers = structData.marker_data.Markers;
 
 % MakrFrames to average out for 
-vldFrames = structData.marker_data.Info.VldFrames(1);
-vldFrames = [vldFrames(1) : vldFrames(end)];
+vldFrames = structData.marker_data.Info.VldFrames;
+vldFrames = [vldFrames(1) : vldFrames(2)];
 
 % get te fieldnames and number of mkrs
 mkrNames = fieldnames(markers);

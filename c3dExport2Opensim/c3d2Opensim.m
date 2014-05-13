@@ -38,9 +38,9 @@ end
 %% Filter the structData
 structData.marker_data.Markers = filterData(structData.marker_data.Markers,...
                                         8,...
-                                        structData.marker_data.Info.frequency,...
+                                        8,...
                                         'butt',...
-                                        8);
+                                        structData.marker_data.Info.frequency );
 
 %% Rotate the structData into the coodinate system of OpenSim
 rotAxis  ='x';
@@ -67,10 +67,10 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static'))
 %   forceplate, zeroing below a threshold, and filtering. 
     Fcut       = 16;  % Cut off frequency for the forceplate
     order      = 4;   % filter order, must be an even number
-    zeroThres  = 5;   % Threshold for the Fz channel to zero under
+    zeroThres  = 10;   % Threshold for the Fz channel to zero under
     filterType = 'butt'; % crit = critically damped, 'butt' = butterworth
 
-    [structData] = grfProcessing(structData,'butt', 16,2,zeroThres);
+    [structData] = grfProcessing(structData, Fcut, order, filterType,zeroThres)
 
 %% Calculate COP 
     [structData] = copCalc(structData);
@@ -85,28 +85,19 @@ for i = 1 : nFP
                                         Rot1);
 end
 
-%% Convert COP into meters rather than mm
-for i = 1 : nFP
-    structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
-end    
-    
 %% Change the forces from a forceplate allocation to a body allocation
 structData.bodyForce_data = connectBody2Forces(structData);
 
-
+%% Convert COP into meters rather than mm
+for i = 1 : nFP
+    structData.bodyForce_data(i).P = structData.bodyForce_data(i).P/1000;
+end    
+   
 %% Print MOT 
-        printMOT(osimBodyForces,analogRate,trialName,structDataPath);
-
-
+printMOT(structData)        % Markers
+        
 end
 
-
-%%
-release( hEvStore );
-release( hParamStore );
-release( hProcessor );
-release( hTrial );
-release( hServer );
 
 
 

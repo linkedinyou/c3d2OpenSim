@@ -1,4 +1,4 @@
-function [bodyForces] = connectBody2Forces(structData, footMrks);                                        );
+function [bodyForce_data] = connectBody2Forces(structData, footMrks);                                      
 %connectbody2Forces() assigns forces to body rather than forceplates.
 %   OpenSim connects bodies to forces using an external loads file. However
 %   it can be easier if we allocate the external forces to bodies,
@@ -8,15 +8,14 @@ function [bodyForces] = connectBody2Forces(structData, footMrks);               
 %   At each time point, forces are allocating to each body based on the 
 %   closest body to each force location (COP). 
 
-%   forceStruct = structure of forces, moments and locations (COP)   
+%   structData = structure of forces, moments and COP 
 
-%   bodyNames   = the names of each body ie {'r.Foot' 'l.Foot'};
-
+%   footMrks    = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'}
 % designate how many mkrs on each foot
-nFootMkr = 3;
+
 
 if nargin == 1
-
+    nFootMkr = 3;
     feetMkrs = findFeetMarkers(structData, nFootMkr);    
     
 elseif nargin == 2
@@ -25,7 +24,8 @@ end
 
 
 %% Define some variables and matrices 
-
+%% Get a centroid mkr for each foot 
+nFeet = length(feetMkrs)/nFootMkr;
 % Number of forceplate
 nFP       = length(structData.fp_data.GRF_data);
 % Number of force samples
@@ -47,38 +47,43 @@ sampleArray      = 1 : length(structData.marker_data.Markers.(mkrNames{1}));
 % New Array for 'upsampling' mkr datan
 upSampleArray   = 1 : samplingRatio : length(sampleArray);    
 
+% Create some empty array's for the force, moment and COp data to live
+for u = 1 : nFeet
+    bodyForce_data(u,1).F   = zeros(size(structData.fp_data.GRF_data(u).F));
+    bodyForce_data(u,1).M   = zeros(size(structData.fp_data.GRF_data(u).F));
+    bodyForce_data(u,1).P   = zeros(size(structData.fp_data.GRF_data(u).F));
+end
 
-%% Get a centroid mkr for each foot 
-nFeet = length(feetMkrs)/nFootMkr;
+
+%% get the centroid of the body mkrs
 
 for i = 1 : nFeet
      % establish the index based on i 
      u = (3*i)-2:(3*i);
      % Calculate the centroid of the three mkrs and save to struct
-     structData.marker_data.FootMkr(i).data =...
-                   (structData.marker_data.Markers.(mkrNames{u(1)}) + ...
-                   structData.marker_data.Markers.(mkrNames{u(2)}) + ...
-                   structData.marker_data.Markers.(mkrNames{u(3)}))  ...
+     structData.marker_data.bodyCenter(i).data =...
+                   (structData.marker_data.Markers.(feetMkrs{u(1)}) + ...
+                   structData.marker_data.Markers.(feetMkrs{u(2)}) + ...
+                   structData.marker_data.Markers.(feetMkrs{u(3)}))  ...
                    / 3;
    
-
-
+               
+    
 end
-
-
+    
 %% Upsample the mkr data to match the forceplate data
-for i = 1:nFeet
+for i = 1 : nFeet
     % upsample the body data
-    structData.marker_data.FootMkr(i).data =...
+    structData.marker_data.bodyCenter(i).data =...
                           interp1(sampleArray',...                      % Old sample freq
-                          structData.marker_data.FootMkr(i).data,...    % Foot center mkr
+                          structData.marker_data.bodyCenter(i).data,...    % Foot center mkr
                           upSampleArray');                              % new sample freq 
 end     
 
   
 %% Loop through the each frame of force data and comapare the distance 
 %    between the feet centers and the COP. The closest distance will cause
-%    an allocation of that force to that foot. 
+%    an allocation of that force to that body. 
 
 
 for i = 1 : nFP
@@ -91,18 +96,17 @@ for i = 1 : nFP
     % Get the distance of the force to each body
     for u = 1 : nFeet
           dist(:,u) = MarkerDistance(COP(forceFrames,:),...
-                                  structData.marker_data.FootMkr(u).data(forceFrames,:));
+                                  structData.marker_data.bodyCenter(u).data(forceFrames,:));
     end
     
-    % Get the index for the closests body
+    % Get the index for the closest body
     [minDistance closestBody] =  min(mean(dist));
     
-    
-    
     % save the data to the correct body
-    bodyForce(closestBody).force(t,:)   = forceStruct(i).force(t,:);
-    bodyForce(closestBody).moment(t,:)  = forceStruct(i).moment(t,:);
-    bodyForce(closestBody).cop(t,:)     = forceStruct(i).cop(t,:);
+    bodyForce_data(closestBody).F(forceFrames,:)   = structData.fp_data.GRF_data(i).F(forceFrames,:);
+    bodyForce_data(closestBody).M(forceFrames,:)   = structData.fp_data.GRF_data(i).M(forceFrames,:);
+    bodyForce_data(closestBody).P(forceFrames,:)   = structData.fp_data.GRF_data(i).P(forceFrames,:);
+    clear dist
 end
 
         
@@ -110,13 +114,7 @@ end
 end
 
    
-end  
-   
-   
-   
-   
-     
-     
+  
      
      
      

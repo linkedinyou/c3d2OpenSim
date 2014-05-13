@@ -1,4 +1,4 @@
-function printMOT(bodyForces,analogRate,trialName,dataPath)
+function printMOT(structData)
 % printMOT() Printes a structure of Mkr Data to TRC format
 %   mkrData, 
 %   sampleRate,
@@ -9,19 +9,24 @@ function printMOT(bodyForces,analogRate,trialName,dataPath)
 %   Author: J.J. Dunne, Thor Besier, C.J. Donnelly, S. Hamner. 
 
 %% Pre- allocate some arrays and set some index values
-nFrames      =  length(bodyForces(1).force);
-nBodyForces  = length(bodyForces);
+nFrames      = length(structData.bodyForce_data(1).F);
+nForces      = length(structData.bodyForce_data);
 forceArray   = [];
 torqueArray  = [];
+[pathstr, name, ext] = fileparts(structData.marker_data.Filename);
+analogRate   = structData.fp_data.Info(1).frequency;
 
-%% Dump out all the Marker Data
-    for i = 1:nBodyForces
-          forceArray = [forceArray bodyForces(i).force];
-          forceArray = [forceArray bodyForces(i).cop];
+
+%% Dump out all the force  Data
+    for i = 1:nForces
+          length( structData.bodyForce_data(i).F)
+          forceArray = [forceArray structData.bodyForce_data(i).F];
+          forceArray = [forceArray structData.bodyForce_data(i).P];
+          
     end
 
-    for i = 1:nBodyForces
-          torqueArray = [torqueArray bodyForces(i).moment];
+    for i = 1:nForces
+          torqueArray = [torqueArray structData.bodyForce_data(i).M];
     end
 % Create Arrays for Frame and Time 
     frameArray  =   [0:nFrames-1]';                % Create frame Number array
@@ -36,7 +41,7 @@ torqueArray  = [];
    bodyForceHeader =[];
    bodyTorqueHeader=[];
    
-    for i = 1:nBodyForces
+    for i = 1:nForces
         ForceHeader = [];
         PointHeader = [];
         TorqueHeader= [];
@@ -60,25 +65,22 @@ torqueArray  = [];
        nHeaders = length(headers);
 %% Print Data 
 
-
-%Find the size of the Matrix    
+% Find the size of the Matrix    
     [m n]            =   size(forceData);    
-    
-%Create a Print Path    
-    motFileName      = fullfile(dataPath, [trialName '_grf.mot']);
+% Create a Print Path    
+    motFileName      = fullfile(pathstr, [name '_grf.mot']);
     fid              = fopen(motFileName,'w');
     
     fprintf('\n      Printing .MOT File              ');
     
     % Print trial header
-    fprintf(fid,'name %s\n',trialName);
+    fprintf(fid,'name %s\n',name);
     fprintf(fid,'datacolumns %d\n',n);
     fprintf(fid,'datarows %d\n',m);
     fprintf(fid,'range %f %f\n',timeArray(1),timeArray(end));
     fprintf(fid,'endheader\n');
     
-    
-    % Print array headers
+        % Print array headers
     fmt1=['%s\t'];
     for i = 1:nHeaders
         fprintf(fid,fmt1,char(headers(i)));
@@ -86,7 +88,7 @@ torqueArray  = [];
     fprintf(fid,'\n');
     
     % Print data
-    fmt3=[repmat(' %2.6g\t',1,9*nBodyForces+1) '\n']; 
+    fmt3=[repmat(' %2.6g\t',1,9*nForces+1) '\n']; 
     for i   = 1:nFrames
             fprintf(fid,fmt3,forceData(i,:));    % print a row's of Mkr Data
     end

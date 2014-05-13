@@ -54,7 +54,7 @@ if isstruct(oData)
             % assign the rotated data back to field  
             nData.(fields{i}) = rotatedData;  
     end
-else
+elseif ismatrix(oData)
     % Data is a n*3 matrix
     nData = [rotationMatrix'*oData']';
     

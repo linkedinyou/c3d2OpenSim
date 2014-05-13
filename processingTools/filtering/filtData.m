@@ -1,4 +1,4 @@
-function [fltData] = filtData(data,rate,Fcut_butt,filtType,N)
+function [fltData] = filtData(data,Fcut, N, filtType, rate)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,15 +8,15 @@ function [fltData] = filtData(data,rate,Fcut_butt,filtType,N)
  
      if strcmp('butt',filtType)
         dt = 1/rate;
-        Fcut_butt = Fcut_butt /(sqrt(2) - 1)^(0.5/N);
-        Wn = 2 * Fcut_butt * dt;
+        Fcut = Fcut /(sqrt(2) - 1)^(0.5/N);
+        Wn = 2 * Fcut * dt;
         [b, a] = butter(N, Wn);
      end
        
      if strcmp('crit',filtType)
-        Ccrit = 1/sqrt(2^(1/(2*n))-1);
+        Ccrit = 1/sqrt(2^(1/(2*N))-1);
         Fcrit = Fcut * Ccrit;
-        Wn= tan((pi*Fcrit)/Fsp);
+        Wn= tan((pi*Fcrit)/Fcut);
         K1= 2*Wn;
         K2=(Wn)^2;a0 = K2 / (1 + K1 + K2);
         a1 = 2 * a0;

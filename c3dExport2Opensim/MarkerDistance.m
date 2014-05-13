@@ -10,7 +10,6 @@ function [dist]=MarkerDistance(XYZmarker1,XYZmarker2)
 % Last Changes:	November 29, 1996
 % Version:	1.0
 		
-
 [s1,t1]=size(XYZmarker1);
 [s2,t2]=size(XYZmarker2);
 
@@ -20,5 +19,5 @@ if s1~=s2 | t1~=t2 | t2~=3
  return
 end
 
-tmp=[XYZmarker1-XYZmarker2].^2;
+tmp = [XYZmarker1-XYZmarker2].^2;
 dist=[sum(tmp')'].^0.5;
