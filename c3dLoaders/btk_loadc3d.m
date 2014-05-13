@@ -78,9 +78,24 @@ marker_data.Last_Frame = btkGetLastFrame(acq);
 % get marker data
 [markers, markersInfo] = btkGetMarkers(acq);
 marker_data.Markers = markers;
-
-% convert data to millimeters if in meters - catch if units have been screwed with
 fnames = fieldnames(markers);
+
+% get the frames where all marker data is available
+VldFrames = [1 length(marker_data.Markers.(fnames{1})(:,1))];
+for i = 1:length(fnames)
+    
+    mkrFrames = find( marker_data.Markers.(fnames{i})(:,1) ~= 0);
+
+    if VldFrames(1) < mkrFrames(1)
+         VldFrames(1) = mkrFrames(1);
+    end
+    
+    if VldFrames(2) > mkrFrames(end)
+         VldFrames(2) = mkrFrames(end);
+    end 
+end
+   
+% convert data to millimeters if in meters - catch if units have been screwed with
 if mean(markers.(fnames{1})(:,1))<2 && mean(markers.(fnames{1})(:,2))<2 && mean(markers.(fnames{1})(:,3))<2
    m_mm = 1;
 else m_mm = 0;
@@ -96,6 +111,7 @@ end
 % add the marker data information to the structure
 marker_data.Info = markersInfo;
 marker_data.Info.NumFrames = btkGetPointFrameNumber(acq);
+marker_data.Info.VldFrames = VldFrames;
 % add a timeline field
 marker_data.Time = (1/marker_data.Info.frequency:...
     1/marker_data.Info.frequency:...
