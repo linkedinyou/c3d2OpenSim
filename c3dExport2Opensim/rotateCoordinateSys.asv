@@ -1,4 +1,4 @@
-function [oData] = rotateCoordinateSys(oData,rotation)
+function [nData] = rotateCoordinateSys(oData,rotation)
 % rotateCoordinateSys()
 % Rotates xyz data about an axis. Data is assumed to be an nx3 sized array.
 % Examples would be the xyz coordinates of a marker or the xyz components
@@ -21,7 +21,7 @@ function [oData] = rotateCoordinateSys(oData,rotation)
 % Author: Cyril J Donnelly, James Dunne, Thor Besier.  
     
 %%  Determine the coordinate to rotate around   
-if ~isstruct(rotation)
+if ~isstr(rotation)
     error('variable "rotation" is not a structure. Please view function help to view variable format')
 end
     
@@ -30,9 +30,8 @@ nRot = length(rotation.axis);
 
 for i = 1 : nRot   
     
-    rotAxis = char(rotation.axis(i));
-    Rot     = rotation.value(i);
-    
+    rotAxis = rotation.axis;
+   
     % Create roation matrices according to Rot (degrees)   
     RotAboutX1 = [1,0,0;0,cos(Rot*pi/180),-(sin(Rot*pi/180));0,sin(Rot*pi/180),cos(Rot*pi/180)];
     RotAboutY1 = [cos(Rot*pi/180),0,sin(Rot*pi/180);0,1,0;-(sin(Rot*pi/180)),0,cos(Rot*pi/180)];
@@ -59,11 +58,11 @@ for i = 1 : nRot
                 % Rotate the data
                 rotatedData = [rotationMatrix'*vectorData']';
                 % assign the rotated data back to field  
-                oData.(fields{u}) = rotatedData;  
+                nData.(fields{u}) = rotatedData;  
         end
     elseif ismatrix(oData)
         % Data is a n*3 matrix
-        oData = [rotationMatrix'*oData']';
+        nData = [rotationMatrix'*oData']';
 
     end
 end

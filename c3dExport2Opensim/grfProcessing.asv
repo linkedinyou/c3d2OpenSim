@@ -33,13 +33,9 @@ for i = 1 : length(structData.fp_data.GRF_data)
     forces = filterData(forces,Fcut,N,filterType,analogRate);
     moments = filterData(moments,Fcut,N,filterType,analogRate);
 
-    % Zero the forces and moments when forces are below threshold
+    % Zero the forces and moments (where forces are below threshold
     forces(zeroRows,:) = 0;
     moments(zeroRows,:) = 0;
-    
-    % Save the processed data back to the structure
-    structData.fp_data.GRF_data(i).F = forces;
-    structData.fp_data.GRF_data(i).M = moments;
     
 end
 
