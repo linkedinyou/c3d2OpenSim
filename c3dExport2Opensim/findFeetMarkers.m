@@ -34,11 +34,16 @@ nMkrs = length(mkrNames);
 % gait cycle. 
 for i = 1 : nMkrs
     
-    g = find(markers.(mkrNames{i}(vldFrames',2))> 1)
+    g = find(markers.(mkrNames{i})(vldFrames',2) > 1)
     % Get the minimim height of the markers over the gait cycle
     
+    minData = min(markers.(mkrNames{i})(g,2));
     
-    minH(i) = min(markers.(mkrNames{i})(g,2));
+    if ~isempty(minData)
+        minH(i) = min(markers.(mkrNames{i})(g,2));    
+    else
+        minH(i) = min(markers.(mkrNames{i})(:,2)); 
+    end
 end
 
 % Define the mean height for all the makers

@@ -28,7 +28,7 @@ elseif ~isstruct(oData) && ismatrix(oData)
     [FData] = filtfiltData(oData,Fcut, N, filtType, rate);
     
 else
-    error('Data input type for filter is not correct. Check input data is a matrix or structure')
+    error('Data input type for filter is not correct. Check input data is a matrix or struct')
     
 end
     
