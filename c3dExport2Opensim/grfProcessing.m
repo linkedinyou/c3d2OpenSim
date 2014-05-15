@@ -15,8 +15,6 @@ for i = 1 : length(structData.fp_data.GRF_data)
     moments(:,2) = structData.fp_data.FP_data(i).channels.(forceNames{2});
     moments(:,3) = structData.fp_data.FP_data(i).channels.(forceNames{3});
 
-    % get the analoge data rate 
-    analogRate = structData.fp_data.Info(i).frequency;
     % get the force and moment channel offset
     forceOffSet  = mean(forces(1:100,:));
     momentOffset = mean(moments(1:100,:));
@@ -29,10 +27,6 @@ for i = 1 : length(structData.fp_data.GRF_data)
     % find when the vertical grf is below a threshold 
     zeroRows = find(abs(forces(:,vgrfCol))<threshold);
     
-    % filter the Forces and moments
-    forces = filterData(forces,Fcut,N,filterType,analogRate);
-    moments = filterData(moments,Fcut,N,filterType,analogRate);
-
     % Zero the forces and moments when forces are below threshold
     forces(zeroRows,:) = 0;
     moments(zeroRows,:) = 0;

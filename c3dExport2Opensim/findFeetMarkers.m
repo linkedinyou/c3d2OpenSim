@@ -30,19 +30,22 @@ nMkrs = length(mkrNames);
 
 %% figure out markers closest to the ground
 
+[maxValue vgrfCol] = max(max(abs(structData.fp_data.GRF_data(1).F)))
+
+
 % Loop through the markers and get each markers minimum height over the
 % gait cycle. 
 for i = 1 : nMkrs
     
-    g = find(markers.(mkrNames{i})(vldFrames',2) > 1)
+    g = find(markers.(mkrNames{i})(vldFrames', vgrfCol) > 1)
     % Get the minimim height of the markers over the gait cycle
     
-    minData = min(markers.(mkrNames{i})(g,2));
+    minData = min(markers.(mkrNames{i})(g,vgrfCol));
     
     if ~isempty(minData)
-        minH(i) = min(markers.(mkrNames{i})(g,2));    
+        minH(i) = min(markers.(mkrNames{i})(g,vgrfCol));    
     else
-        minH(i) = min(markers.(mkrNames{i})(:,2)); 
+        minH(i) = min(markers.(mkrNames{i})(:,vgrfCol)); 
     end
 end
 

@@ -43,39 +43,17 @@ end
     rotation.axis = {'z' 'x'};
     rotation.value= [90 90];
 
-    % Filter characteristics
-    Fcut       = 8;      % Cut off frequency for the forceplate
-    order      = 2;      % filter order, must be an even number
-    filterType = 'butt'; % crit = critically damped, 'butt' = butterworth
-    
-    % forceplate threshold
-    zeroThres  = 10;     % Threshold for the Fz channel to zero under
-    
-
-%% Filter the structData
-structData.marker_data.Markers = filterData(structData.marker_data.Markers,...
-                                        Fcut,...
-                                        order,...
-                                        'butt',...
-                                        structData.marker_data.Info.frequency );
-
 %% Rotate the structData into the coodinate system of OpenSim
-
 % set of ordered rotations to be completed
-rotation.axis = {'z' 'x'};
-rotation.value= [90 90];
+
 [structData.marker_data.Markers] = rotateCoordinateSys(structData.marker_data.Markers,...
                                                         rotation);
  
-
-                                                
 %% Print the structData into a OpenSim trc format 
 printTRC(structData.marker_data.Markers,...         % Markers
          structData.marker_data.Info.frequency,...  % video freq
          structData.marker_data.Filename);          % filename
 
-     
-     
 %% Read the Forces, moments and Force plate dimensions from trial%%%
 if isempty(findstr(lower(structData.marker_data.Filename),'static'))   
 
