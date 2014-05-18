@@ -30,7 +30,7 @@ nMkrs = length(mkrNames);
 
 %% figure out markers closest to the ground
 
-[maxValue vgrfCol] = max(max(abs(structData.fp_data.GRF_data(1).F)))
+[maxValue vgrfCol] = max(max(abs(structData.fp_data.GRF_data(1).F)));
 
 
 % Loop through the markers and get each markers minimum height over the

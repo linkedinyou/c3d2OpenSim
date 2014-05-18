@@ -21,7 +21,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
 
         % Dump out the forceplate X&Y coordinates
         xCorners = structData.fp_data.FP_data(i).corners(:,1);
-        yCorners = structData.fp_data.FP_data(i).corners(:,2); 
+        yCorners = structData.fp_data.FP_data(i).corners(:,3); 
         
         fpCenter = ...
         (structData.fp_data.FP_data(i).corners(1,:) +...
@@ -31,15 +31,15 @@ for i = 1 : length(structData.fp_data.GRF_data)
         
         
         % get the height of the forceplate below ground
-        h = mean(round(structData.fp_data.FP_data(i).corners(:,3)));
+        h = mean(round(structData.fp_data.FP_data(i).corners(:,2)));
         if h == 0
             h  = 1;
         end
 
         % Calculate the COP from the forces and moments
-        COPx = ((-h*fx - my)./fz) + fpCenter(1);
-        COPy = fpCenter(2) - ((-h*fy - mx)./fz) ;
-        COPz = zeros(length(COPx),1);
+        COPx = ((-h*fx + mz)./fy) + fpCenter(1);
+        COPz= fpCenter(3) - ((-h*fz + mx)./fy) ;
+        COPy = zeros(length(COPx),1);
               
         % Calculate the free moment (Tz) of the forceplate
 %         a  =  mz;
@@ -57,15 +57,15 @@ for i = 1 : length(structData.fp_data.GRF_data)
 %         Tz(nNaN)   = 0;
         
         % Plot the calculated COP vs the original COP
-        hold on 
-        plot(structData.fp_data.GRF_data(i).P,'k')
-        plot(COPx,'b')
-        plot(COPy,'r')
+%         hold on 
+%         plot(structData.fp_data.GRF_data(i).P,'k')
+%         plot(COPx,'b')
+%         plot(COPy,'r')
 
         % back up the original COP in the struct
         structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
         % save the processed COP to the structure
-        structData.fp_data.GRF_data(i).P(:,1:2) = [COPx COPy];  
+        structData.fp_data.GRF_data(i).P = [COPx COPy COPz];  
         % save the processed Z torque to the structure
        % structData.fp_data.GRF_data(i).M = [Tx Ty Tz];  
          

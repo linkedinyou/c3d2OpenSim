@@ -1,4 +1,4 @@
-function [structData] = grfProcessing(structData, Fcut, N, filterType, threshold)
+function [structData] = grfProcessing(structData, threshold)
 %grfProcessing() Processes raw force and moment data
 %   Detailed explanation goes here
 
@@ -8,13 +8,9 @@ for i = 1 : length(structData.fp_data.GRF_data)
 
     forceNames = fieldnames(structData.fp_data.FP_data(i).channels);
     
-    forces(:,1) = structData.fp_data.FP_data(i).channels.(forceNames{1});
-    forces(:,2) = structData.fp_data.FP_data(i).channels.(forceNames{2});
-    forces(:,3) = structData.fp_data.FP_data(i).channels.(forceNames{3});
-    moments(:,1) = structData.fp_data.FP_data(i).channels.(forceNames{1});
-    moments(:,2) = structData.fp_data.FP_data(i).channels.(forceNames{2});
-    moments(:,3) = structData.fp_data.FP_data(i).channels.(forceNames{3});
-
+    forces = structData.fp_data.GRF_data(i).F;
+    moments = structData.fp_data.GRF_data(i).M;
+    
     % get the force and moment channel offset
     forceOffSet  = mean(forces(1:100,:));
     momentOffset = mean(moments(1:100,:));

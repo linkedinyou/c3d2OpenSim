@@ -40,9 +40,22 @@ end
     % that of OpenSim. Reminder that the 'x' axis should be the long axis.
     % If its not, you will have to complete a rotation around 'z' before
     % you rotate about 'x'
-    rotation.axis = {'z' 'x'};
-    rotation.value= [90 90];
+%     rotation.axis = {'z' 'x'};
+%     rotation.value= [90 90];
+%     
+    rotation.axis = {'x'};
+    rotation.value= [90];
+    
+    % set a threshold to zero under
+    zeroThres = 4;
 
+    % Either the number of markers on 1 foot or the names of the markers
+    footMks = 3;
+    % footMks = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'};
+%% Replace zeros with NaNs
+[structData] = replaceZerosWNaNs(structData);
+    
+    
 %% Rotate the structData into the coodinate system of OpenSim
 % set of ordered rotations to be completed
 
@@ -57,16 +70,19 @@ printTRC(structData.marker_data.Markers,...         % Markers
 %% Read the Forces, moments and Force plate dimensions from trial%%%
 if isempty(findstr(lower(structData.marker_data.Filename),'static'))   
 
+%   structData = btk_loadc3d(fullfile(pathname,filein), 10);
+   
+    
 %% Number of forceplates
     nFP = length(structData.fp_data.Info);
     
-%% Processing of the GRF structData includes taking bias out of the 
-%   forceplate, zeroing below a threshold, and filtering. 
-   [structData] = grfProcessing(structData, Fcut, order, filterType,zeroThres);
+%%  
+    structData = forces2Global(structData);    
+    
+    
+   
 
-%% Calculate COP 
-    [structData] = copCalc(structData);
-
+  
 %% Rotate into OpenSim Frame
 
 for i = 1 : nFP
@@ -74,10 +90,23 @@ for i = 1 : nFP
     [structData.fp_data.GRF_data(i)] = ...
                     rotateCoordinateSys(structData.fp_data.GRF_data(i),...
                                         rotation);
+                                    
+    [structData.fp_data.FP_data(i).corners] = ...
+                    rotateCoordinateSys(structData.fp_data.FP_data(i).corners,...
+                                        rotation);
 end
 
+%% Processing of the GRF structData will include taking bias out of the 
+%   forceplate, zeroing below a threshold, and perhaps filtering. 
+   [structData] = grfProcessing(structData,zeroThres);
+ 
+
+%% Calculate COP 
+    [structData] = copCalc(structData);
+
+    
 %% Change the forces from a forceplate allocation to a body allocation
-structData.bodyForce_data = connectForces2Bodies(structData);
+structData.bodyForce_data = connectForces2Bodies(structData, footMks);
 
 %% Convert COP into meters rather than mm
 for i = 1 : nFP
@@ -88,9 +117,6 @@ end
 printMOT(structData)        % Markers
         
 end
-
-
-
 
 end
 

@@ -155,6 +155,10 @@ if ~isempty(FPs)
     fp_data.GRF_data = grw_data;
     fp_data.Info = FPsInfo;
     fp_data.FP_data = FPs;
+    % convert the forceplate corrdinates to a xyz vector. 
+    for i = 1 : length(fp_data.FP_data)
+        fp_data.FP_data(i).corners = fp_data.FP_data(i).corners';
+    end
     fp_data.Time = (1/FPsInfo(1).frequency:1/FPsInfo(1).frequency:...
         length(grw_data(1).P)/FPsInfo(1).frequency)';
     % write to data structure
