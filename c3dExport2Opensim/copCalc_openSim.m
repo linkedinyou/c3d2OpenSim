@@ -21,13 +21,13 @@ for i = 1 : length(structData.fp_data.GRF_data)
 
         % Dump out the forceplate X&Y coordinates
         xCorners = structData.fp_data.FP_data(i).corners(:,1);
-        yCorners = structData.fp_data.FP_data(i).corners(:,3); 
+        zCorners = structData.fp_data.FP_data(i).corners(:,3); 
         
         fpCenter = ...
         (structData.fp_data.FP_data(i).corners(1,:) +...
         structData.fp_data.FP_data(i).corners(2,:) +...
         structData.fp_data.FP_data(i).corners(3,:) +...
-        structData.fp_data.FP_data(i).corners(4,:))/4
+        structData.fp_data.FP_data(i).corners(4,:))/4;
         
         
         % get the height of the forceplate below ground
@@ -42,32 +42,36 @@ for i = 1 : length(structData.fp_data.GRF_data)
         COPy = zeros(length(COPx),1);
               
         % Calculate the free moment (Tz) of the forceplate
-%         a  =  mz;
-%         b  =  fy.*(COPx-xlength/2);
-%         c  =  (COPy-ylength/2).*fx;
-%         Tz =  (a-b+c)./1000;
-%             
-%         Tx = zeros(1,length(Tz))';
-%         Ty = Tx;
-%             
-%         % take out any Nans
-%         nNaN    = find(isnan(COPx));
-%         COPx(nNaN) = 0;
-%         COPy(nNaN) = 0;
-%         Tz(nNaN)   = 0;
+        xlength = max(xCorners)-min(xCorners);
+        zlength = max(zCorners)-min(zCorners);
+        a  =  my;
+        b  =  fz.*(COPx-xlength/2);
+        c  =  (COPy-zlength/2).*fx;
+        Ty =  (a-b+c)./1000;
+            
+        Tx = zeros(1,length(Ty))';
+        Tz = Tx;
+            
+        % take out any Nans
+        nNaN    = find(isnan(COPx));
+        COPx(nNaN) = 0;
+        COPy(nNaN) = 0;
+        Ty(nNaN)   = 0;
+        Tz(nNaN)   = 0;
+        Tx(nNaN)   = 0;
         
         % Plot the calculated COP vs the original COP
-%         hold on 
-%         plot(structData.fp_data.GRF_data(i).P,'k')
-%         plot(COPx,'b')
-%         plot(COPz,'r')
+        % hold on 
+        % plot(structData.fp_data.GRF_data(i).P,'k')
+        % plot(COPx,'b')
+        % plot(COPz,'r')
 
         % back up the original COP in the struct
         structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
         % save the processed COP to the structure
         structData.fp_data.GRF_data(i).P = [COPx COPy COPz];  
         % save the processed Z torque to the structure
-       % structData.fp_data.GRF_data(i).M = [Tx Ty Tz];  
+        structData.fp_data.GRF_data(i).M = [Tx Ty Tz];  
          
 end
        

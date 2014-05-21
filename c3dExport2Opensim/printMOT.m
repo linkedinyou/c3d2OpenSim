@@ -9,8 +9,8 @@ function printMOT(structData)
 %   Author: J.J. Dunne, Thor Besier, C.J. Donnelly, S. Hamner. 
 
 %% Pre- allocate some arrays and set some index values
-nFrames      = length(structData.bodyForce_data(1).F);
-nForces      = length(structData.bodyForce_data);
+nFrames      = length(structData.fp_data.GRF_data(1).F);
+nForces      = length(structData.fp_data.GRF_data);
 forceArray   = [];
 torqueArray  = [];
 [pathstr, name, ext] = fileparts(structData.marker_data.Filename);
@@ -19,14 +19,14 @@ analogRate   = structData.fp_data.Info(1).frequency;
 
 %% Dump out all the force  Data
     for i = 1:nForces
-          length( structData.bodyForce_data(i).F)
-          forceArray = [forceArray structData.bodyForce_data(i).F];
-          forceArray = [forceArray structData.bodyForce_data(i).P];
+          length( structData.fp_data.GRF_data(i).F)
+          forceArray = [forceArray structData.fp_data.GRF_data(i).F];
+          forceArray = [forceArray structData.fp_data.GRF_data(i).P];
           
     end
 
     for i = 1:nForces
-          torqueArray = [torqueArray structData.bodyForce_data(i).M];
+          torqueArray = [torqueArray structData.fp_data.GRF_data(i).M];
     end
 % Create Arrays for Frame and Time 
     frameArray  =   [0:nFrames-1]';                % Create frame Number array

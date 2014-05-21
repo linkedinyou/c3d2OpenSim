@@ -42,32 +42,35 @@ for i = 1 : length(structData.fp_data.GRF_data)
         COPz = zeros(length(COPx),1);
               
         % Calculate the free moment (Tz) of the forceplate
-%         a  =  mz;
-%         b  =  fy.*(COPx-xlength/2);
-%         c  =  (COPy-ylength/2).*fx;
-%         Tz =  (a-b+c)./1000;
-%             
-%         Tx = zeros(1,length(Tz))';
-%         Ty = Tx;
-%             
-%         % take out any Nans
-%         nNaN    = find(isnan(COPx));
-%         COPx(nNaN) = 0;
-%         COPy(nNaN) = 0;
-%         Tz(nNaN)   = 0;
+        a  =  mz;
+        b  =  fy.*(COPx-xlength/2);
+        c  =  (COPy-ylength/2).*fx;
+        Tz =  (a-b+c)./1000;
+            
+        Tx = zeros(1,length(Tz))';
+        Ty = Tx;
+            
+        % take out any Nans
+        nNaN    = find(isnan(COPx));
+        COPx(nNaN) = 0;
+        COPy(nNaN) = 0;
+        COPz(nNaN) = 0;
+        Ty(nNaN)   = 0;
+        Tz(nNaN)   = 0;
+        Tx(nNaN)   = 0;
         
         % Plot the calculated COP vs the original COP
-        hold on 
-        plot(structData.fp_data.GRF_data(i).P,'k')
-        plot(COPx,'b')
-        plot(COPy,'r')
+        % hold on 
+        % plot(structData.fp_data.GRF_data(i).P,'k')
+        % plot(COPx,'b')
+        % plot(COPy,'r')
 
         % back up the original COP in the struct
         structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
         % save the processed COP to the structure
-        structData.fp_data.GRF_data(i).P(:,1:2) = [COPx COPy];  
+        structData.fp_data.GRF_data(i).P(:,1:2) = [COPx COPy COPz];  
         % save the processed Z torque to the structure
-       % structData.fp_data.GRF_data(i).M = [Tx Ty Tz];  
+        structData.fp_data.GRF_data(i).M = [Tx Ty Tz];  
          
 end
        

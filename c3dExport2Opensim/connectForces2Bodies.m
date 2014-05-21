@@ -16,16 +16,14 @@ function [bodyForce_data] = connectForces2Bodies(structData, footMks);
 
 if  isnumeric(footMks)
     feetMkrs = findFeetMarkers(structData, footMks);    
-    
+    nFeet = 2;
 else
     feetMkrs = footMks;
-    
+    nFeet = 2
 end
 
 
 %% Define some variables and matrices 
-%% Get a centroid mkr for each foot 
-nFeet = length(feetMkrs)/nFootMkr;
 % Number of forceplate
 nFP       = length(structData.fp_data.GRF_data);
 % Number of force samples

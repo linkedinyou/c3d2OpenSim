@@ -43,8 +43,8 @@ end
     % rotation.axis = {'z' 'x'};
     % rotation.value= [90 90];
          
-    rotation.axis = {'x'};
-    rotation.value= [90];
+    rotation.axis = {'x' 'y'};
+    rotation.value= [90 180];
     
     % set a threshold to zero under
     zeroThres = 4;
@@ -103,11 +103,12 @@ end
 
     
 %% Change the forces from a forceplate allocation to a body allocation
-structData.fp_data.GRF_data = connectForces2Bodies(structData, footMks);
+structData.bodyForce_data = connectForces2Bodies(structData, footMks);
 
 %% Convert COP into meters rather than mm
 for i = 1 : nFP
-    structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
+    structData.bodyForce_data(i).P = structData.bodyForce_data(i).P/1000;
+    
 end    
    
 %% Print MOT 
