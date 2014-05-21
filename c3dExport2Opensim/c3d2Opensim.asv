@@ -43,8 +43,8 @@ end
     % rotation.axis = {'z' 'x'};
     % rotation.value= [90 90];
          
-    rotation.axis = {'x' 'y'};
-    rotation.value= [90 180];
+    rotation.axis = {'z' 'x'};
+    rotation.value= [-90 90];
     
     % set a threshold to zero under
     zeroThres = 4;
@@ -52,9 +52,20 @@ end
     % Either the number of markers on 1 foot or the names of the markers
     % footMks = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'};
     footMks = 3;
+
+%% Keep marker list 
+ % Pass a list of markers that you would like to keep. 
+ % ie keepMkrs = {'RPSI' 'LPSI' 'LASI' 'RASI' ....
+
+keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
+            'RTIB' 'RTOE' 'LTIB' 'LANK'...
+            'LASI' 'RTHI' 'RHEE' 'LTHI'...
+            'LTOE' 'LHEE' 'SACR'};
+ 
+structData = keepMarkersFromList(structData,keepMkrs);    
     
 %% Replace zeros with NaNs
-[structData] = replaceZerosWNaNs(structData);
+structData = replaceZerosWNaNs(structData);
     
     
 %% Rotate the structData into the coodinate system of OpenSim
@@ -103,12 +114,11 @@ end
 
     
 %% Change the forces from a forceplate allocation to a body allocation
-structData.bodyForce_data = connectForces2Bodies(structData, footMks);
+% structData.fp_data.GRF_data = connectForces2Bodies(structData, footMks);
 
 %% Convert COP into meters rather than mm
-for i = 1 : nFP
-    structData.bodyForce_data(i).P = structData.bodyForce_data(i).P/1000;
-    
+for i = 1 : length(structData.fp_data.GRF_data)
+    structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
 end    
    
 %% Print MOT 
