@@ -1,12 +1,11 @@
 function testForceRotation
 
-warning('on')
-
-data1 = btk_loadc3d('E:\temp\c3dfiles\Lab1.c3d', 10);
-data2 = btk_loadc3d('E:\temp\c3dfiles\Lab2.c3d', 10);
-data3 = btk_loadc3d('E:\temp\c3dfiles\Lab3.c3d', 10);
+data1 = btk_loadc3d('D:\temp\c3dfiles\Lab1.c3d', 10);
+data2 = btk_loadc3d('D:\temp\c3dfiles\Lab2.c3d', 10);
+data3 = btk_loadc3d('D:\temp\c3dfiles\Lab3.c3d', 10);
 
 %% data 1 
+
 
 for i = 1 : 3
 
@@ -46,7 +45,7 @@ for i = 1 : 3
             [x yCol] =  max(max(data.fp_data.GRF_data(u).F));
 
             % coloumn 2 should have 0 COP 
-            YCOP = sum(round(data.fp_data.GRF_data(u).P(:,2)) )
+            YCOP = sum(round(data.fp_data.GRF_data(u).P(:,2)) );
             
             
             if yCol == 2 && YCOP == 0
@@ -63,7 +62,7 @@ for i = 1 : 3
     end
 end
                                                     
-                                                    
+                                             
                                                     
                                                     
 
@@ -72,7 +71,7 @@ end
                                                     
                                                     
                                                     
-end
+
 
 
 

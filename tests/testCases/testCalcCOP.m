@@ -1,10 +1,8 @@
 function testForceRotation
 
-warning('on')
-
-data1 = btk_loadc3d('E:\temp\c3dfiles\Lab1.c3d', 10);
-data2 = btk_loadc3d('E:\temp\c3dfiles\Lab2.c3d', 10);
-data3 = btk_loadc3d('E:\temp\c3dfiles\Lab3.c3d', 10);
+data1 = btk_loadc3d('D:\temp\c3dfiles\Lab1.c3d', 10);
+data2 = btk_loadc3d('D:\temp\c3dfiles\Lab2.c3d', 10);
+data3 = btk_loadc3d('D:\temp\c3dfiles\Lab3.c3d', 10);
 
 %% data 1 
 
@@ -69,9 +67,13 @@ for i = 1 : 3
         
             diffData = rms((fpData(:,1) - calData(:,1)))
              
-             t = 0:0.001:1-0.001;
-X = cos(2*pi*100*t)';
-Y = rms(X);
+        
+            
+            
+            
+            
+            
+            
 
         end
         
@@ -79,6 +81,10 @@ Y = rms(X);
         hold on 
         plot(data.fp_data.GRF_data(2).P(fpFrames.data2,:),'k')
         plot(COP_store.data2(fpFrames.data2,:),'r')
+        
+        
+        
+        y = sqrt(sum(u.*conj(u))/size(u,1))
         
         
         
@@ -107,10 +113,6 @@ end
                                                     
                                                     
                                                     
-                                                    
-                                                    
-end
-
-
+           
 
 

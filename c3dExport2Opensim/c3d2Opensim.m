@@ -43,8 +43,8 @@ end
 %     rotation.axis = {'z' 'x'};
 %     rotation.value= [90 90];
 %     
-    rotation.axis = {'x'};
-    rotation.value= [90];
+    rotation.axis = {'x' 'y'};
+    rotation.value= [90 180];
     
     % set a threshold to zero under
     zeroThres = 4;
@@ -79,10 +79,6 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static'))
 %%  
     structData = forces2Global(structData);    
     
-    
-   
-
-  
 %% Rotate into OpenSim Frame
 
 for i = 1 : nFP
@@ -102,7 +98,7 @@ end
  
 
 %% Calculate COP 
-    [structData] = copCalc(structData);
+    [structData] = copCalc_openSim(structData);
 
     
 %% Change the forces from a forceplate allocation to a body allocation

@@ -15,8 +15,7 @@ function [bodyForce_data] = connectForces2Bodies(structData, footMks);
 
 
 if  isnumeric(footMks)
-    
-    feetMkrs = findFeetMarkers(structData, nFootMkr);    
+    feetMkrs = findFeetMarkers(structData, footMks);    
     
 else
     feetMkrs = footMks;

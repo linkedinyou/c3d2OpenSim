@@ -71,9 +71,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
         moments(:,2) = -moments(:,2);
     end
 
-    
-    
-    
+       
 %     
 %     hold on
 %     plot(forces, 'r')

@@ -60,7 +60,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
 %         hold on 
 %         plot(structData.fp_data.GRF_data(i).P,'k')
 %         plot(COPx,'b')
-%         plot(COPy,'r')
+%         plot(COPz,'r')
 
         % back up the original COP in the struct
         structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
