@@ -56,6 +56,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
         nNaN    = find(isnan(COPx));
         COPx(nNaN) = 0;
         COPy(nNaN) = 0;
+        COPz(nNaN) = 0;
         Ty(nNaN)   = 0;
         Tz(nNaN)   = 0;
         Tx(nNaN)   = 0;

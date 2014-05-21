@@ -82,8 +82,6 @@ printTRC(structData.marker_data.Markers,...         % Markers
 %% Read the Forces, moments and Force plate dimensions from trial%%%
 if isempty(findstr(lower(structData.marker_data.Filename),'static'))   
 
-%   structData = btk_loadc3d(fullfile(pathname,filein), 10);
-   
     
 %% Number of forceplates
     nFP = length(structData.fp_data.Info);
@@ -110,7 +108,7 @@ end
  
 
 %% Calculate COP 
-    [structData] = copCalc_openSim(structData);
+    structData = copCalc_openSim(structData);
 
     
 %% Change the forces from a forceplate allocation to a body allocation
