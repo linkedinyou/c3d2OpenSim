@@ -73,9 +73,14 @@ for i = 1 : length(structData.fp_data.GRF_data)
 
        
 %     
-%     hold on
-%     plot(forces, 'r')
-%     plot(structData.fp_data.GRF_data(i).F, 'k')
+     hold on
+     plot(forces, 'r')
+     plot(structData.fp_data.GRF_data(i).F, 'k')
+     
+     hold on
+     plot(forces(:,1), 'r')
+     plot(structData.fp_data.GRF_data(i).F(:,2), 'k')
+     
 %     
     structData.fp_data.GRF_data(i).F_original = structData.fp_data.GRF_data(i).F;
     structData.fp_data.GRF_data(i).M_original = structData.fp_data.GRF_data(i).M;

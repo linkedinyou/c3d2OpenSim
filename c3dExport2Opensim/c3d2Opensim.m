@@ -43,8 +43,8 @@ end
     % rotation.axis = {'z' 'x'};
     % rotation.value= [90 90];
          
-    rotation.axis = {'z' 'x'};
-    rotation.value= [-90 90];
+    rotation.axis = {'x'};
+    rotation.value= [90];
     
     % set a threshold to zero under
     zeroThres = 4;
@@ -56,14 +56,14 @@ end
 %% Keep marker list 
  % Pass a list of markers that you would like to keep. 
  % ie keepMkrs = {'RPSI' 'LPSI' 'LASI' 'RASI' ....
-
-keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
-            'RTIB' 'RTOE' 'LTIB' 'LANK'...
-            'LASI' 'RTHI' 'RHEE' 'LTHI'...
-            'LTOE' 'LHEE' 'SACR'};
- 
-structData = keepMarkersFromList(structData,keepMkrs);    
-    
+% 
+% keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
+%             'RTIB' 'RTOE' 'LTIB' 'LANK'...
+%             'LASI' 'RTHI' 'RHEE' 'LTHI'...
+%             'LTOE' 'LHEE' 'SACR'};
+%  
+% structData = keepMarkersFromList(structData,keepMkrs);    
+%     
 %% Replace zeros with NaNs
 structData = replaceZerosWNaNs(structData);
     
