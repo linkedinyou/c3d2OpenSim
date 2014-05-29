@@ -81,7 +81,7 @@ printTRC(structData.marker_data.Markers,...         % Markers
 
 %% Read the Forces, moments and Force plate dimensions from trial%%%
 if isempty(findstr(lower(structData.marker_data.Filename),'static'))   
-    structData = btk_loadc3d(fullfile(pathname,filein), 10);
+   
 
     
 %% Number of forceplates
