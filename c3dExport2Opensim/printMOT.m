@@ -19,7 +19,7 @@ analogRate   = structData.fp_data.Info(1).frequency;
 
 %% Dump out all the force  Data
     for i = 1:nForces
-          length( structData.fp_data.GRF_data(i).F)
+          length( structData.fp_data.GRF_data(i).F);
           forceArray = [forceArray structData.fp_data.GRF_data(i).F];
           forceArray = [forceArray structData.fp_data.GRF_data(i).P];
           
@@ -37,7 +37,6 @@ analogRate   = structData.fp_data.Info(1).frequency;
     
 %% create the headers for the file   
    Cord = {'x' 'y' 'z'};
-   numPrefix = {'' '1_' '2_' '3_' '4_'};
    bodyForceHeader =[];
    bodyTorqueHeader=[];
    
@@ -47,15 +46,15 @@ analogRate   = structData.fp_data.Info(1).frequency;
         TorqueHeader= [];
         
         for u = 1:3
-            forceHeader = [char(numPrefix(i)) 'ground_force_v' char(Cord(u))];
+            forceHeader = [num2str(i) '_ground_force_v' char(Cord(u))];
             ForceHeader = [ForceHeader {forceHeader}];
-            pointHeader = [char(numPrefix(i)) 'ground_force_p' char(Cord(u))];
+            pointHeader = [num2str(i) 'ground_force_p' char(Cord(u))];
             PointHeader = [PointHeader {pointHeader}];
         end
             bodyForceHeader = [bodyForceHeader ForceHeader PointHeader];
         
         for u = 1:3
-            torqueHeader= [char(numPrefix(i)) 'ground_torque_' char(Cord(u))];
+            torqueHeader= [num2str(i) 'ground_torque_' char(Cord(u))];
             TorqueHeader= [TorqueHeader {torqueHeader}];
         end
             bodyTorqueHeader = [bodyTorqueHeader TorqueHeader];
@@ -81,14 +80,14 @@ analogRate   = structData.fp_data.Info(1).frequency;
     fprintf(fid,'endheader\n');
     
         % Print array headers
-    fmt1=['%s\t'];
-    for i = 1:nHeaders
+    fmt1 = ['%s\t'];
+    for i = 1 : nHeaders
         fprintf(fid,fmt1,char(headers(i)));
     end
     fprintf(fid,'\n');
     
     % Print data
-    fmt3=[repmat(' %2.6g\t',1,9*nForces+1) '\n']; 
+    fmt3 = [repmat(' %2.6g\t',1,9*nForces+1) '\n']; 
     for i   = 1:nFrames
             fprintf(fid,fmt3,forceData(i,:));    % print a row's of Mkr Data
     end
