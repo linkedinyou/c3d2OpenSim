@@ -62,10 +62,10 @@ for i = 1 : length(structData.fp_data.GRF_data)
         Tx(nNaN)   = 0;
         
         % Plot the calculated COP vs the original COP
-        % hold on 
-        % plot(structData.fp_data.GRF_data(i).P,'k')
-        % plot(COPx,'b')
-        % plot(COPz,'r')
+        hold on 
+        plot(structData.fp_data.GRF_data(i).P,'k')
+        plot(COPx,'b')
+        plot(COPz,'r')
 
         % back up the original COP in the struct
         structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
