@@ -48,13 +48,13 @@ analogRate   = structData.fp_data.Info(1).frequency;
         for u = 1:3
             forceHeader = [num2str(i) '_ground_force_v' char(Cord(u))];
             ForceHeader = [ForceHeader {forceHeader}];
-            pointHeader = [num2str(i) 'ground_force_p' char(Cord(u))];
+            pointHeader = [num2str(i) '_ground_force_p' char(Cord(u))];
             PointHeader = [PointHeader {pointHeader}];
         end
             bodyForceHeader = [bodyForceHeader ForceHeader PointHeader];
         
         for u = 1:3
-            torqueHeader= [num2str(i) 'ground_torque_' char(Cord(u))];
+            torqueHeader= [num2str(i) '_ground_torque_' char(Cord(u))];
             TorqueHeader= [TorqueHeader {torqueHeader}];
         end
             bodyTorqueHeader = [bodyTorqueHeader TorqueHeader];
