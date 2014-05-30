@@ -1,9 +1,5 @@
 function printMOT(structData)
-% printMOT() Printes a structure of Mkr Data to TRC format
-%   mkrData, 
-%   sampleRate,
-%   trialName,
-%   dataPath
+% printMOT() Printes a structure of forces to .mot format
 
 %   Export force data Into OpenSim ready format 
 %   Author: J.J. Dunne, Thor Besier, C.J. Donnelly, S. Hamner. 

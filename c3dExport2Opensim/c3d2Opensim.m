@@ -65,6 +65,7 @@ end
 % structData = keepMarkersFromList(structData,keepMkrs);    
 %     
 %% Replace zeros with NaNs
+    % replaces marker values == 0, with NaN's
 structData = replaceZerosWNaNs(structData);
     
     

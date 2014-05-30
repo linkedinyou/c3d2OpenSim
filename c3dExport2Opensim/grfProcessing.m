@@ -2,7 +2,8 @@ function [structData] = grfProcessing(structData, threshold)
 %grfProcessing() Processes raw force and moment data
 %   Detailed explanation goes here
 
-
+% Author: James Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
+% Created: March 2009  Last Update: May 2014
 
 for i = 1 : length(structData.fp_data.GRF_data)
 

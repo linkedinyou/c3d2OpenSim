@@ -7,12 +7,14 @@ function [bodyForce_data] = connectForces2Bodies(structData, footMks);
 %   and force's as collected.
 %   At each time point, forces are allocating to each body based on the 
 %   closest body to each force location (COP). 
-
+%
 %   structData = structure of forces, moments and COP 
-
+%
 %   footMrks    = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'}
 %                 designate how many mkrs on each foot
 
+%   Written by Thor Besier, James Dunne and Cyril (Jon) Donnelly (2008)
+%   Modifed; James Dunne 2014
 
 if  isnumeric(footMks)
     feetMkrs = findFeetMarkers(structData, footMks);    

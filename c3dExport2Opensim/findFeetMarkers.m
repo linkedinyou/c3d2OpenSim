@@ -12,6 +12,7 @@ function [markerSideNames] = findFeetMarkers(structData, nFootMkr)
 % Output - markerSideNames - array of strings for the feet
 %                      eg ['RMT1' 'RMT2' 'RCAL' 'LMT1' 'LMT2' 'LCAL']
 
+%   Written by James Dunne 2014
 
 % How many total foot markers to look for
 nFMkrs = 2* nFootMkr;

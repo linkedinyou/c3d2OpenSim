@@ -3,6 +3,8 @@ function structData = forces2Global(structData)
 % Rotate the forces and moments from the channels to match that of the 
 % forceplate forces. 
 
+% Written by James Dunne, May (2014). 
+
 % Since the channels are based in the forceplate coordinate system,
 % we have to rotate these into the system of the global. The problem
 % with this is that btk doesnt supply (at the time of writting) the
