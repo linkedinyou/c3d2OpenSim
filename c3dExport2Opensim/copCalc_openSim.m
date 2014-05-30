@@ -1,11 +1,11 @@
 function [structData] = copCalc(structData)
-%Calculates the COP for force and moment data from in ground forceplates
-%%   
-%            
-% ForceDimStruct is a strucutre that has the formate such
-% Cell(n,1)= XYZ coodinates of forceplate corner1 (should be four cells
-% four each forceplate. n represents the row/number of forceplates in trial
-%         
+% Calculates the COP from force and moment data 
+%   Assumes all forces, moments and forceplate coordinates are in OpenSim   
+%   coordinate frame.
+
+% Written by Thor Besier, James Dunne, Cyril (Jon) Donnelly, 2008
+% Last Modified; James Dunne, May (2014). 
+
 
 for i = 1 : length(structData.fp_data.GRF_data)
         
@@ -62,10 +62,10 @@ for i = 1 : length(structData.fp_data.GRF_data)
         Tx(nNaN)   = 0;
         
         % Plot the calculated COP vs the original COP
-        hold on 
-        plot(structData.fp_data.GRF_data(i).P,'k')
-        plot(COPx,'b')
-        plot(COPz,'r')
+        %         hold on 
+        %         plot(structData.fp_data.GRF_data(i).P,'k')
+        %         plot(COPx,'b')
+        %         plot(COPz,'r')
 
         % back up the original COP in the struct
         structData.fp_data.GRF_data(i).P_old = structData.fp_data.GRF_data(i).P;
