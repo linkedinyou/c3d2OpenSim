@@ -69,53 +69,116 @@ OpenSIm Search: http://opensim.stanford.edu/support/index.html
 
 ---
 
-# 3. c3d Readers
-	- Btk, Arnaud Barre and Stephane Armand 
+# 3. btk and btk_loadc3d
+	- Btk (Arnaud Barre and Stephane Armand) are a binaries (mex functions) that matlab can use to read a c3d file. Since c3d's are not standardized across companies and/or labs, it is extremely difficult for c3d reading to be generic. BTK does a great job of reading, marker, forceplate, analog and event data and outputing it.
 
-	- loadc3d(), Glenn Litchwark
-
-	- Data structure required
-
-	- Vicon Pecs, James Dunne
+	- btk_loadc3d() (Glen Litchwark) has written a very nice interface function for the btk binaries that stores data given from btk into a particular structure for analysis. Marker, forceplate, analoge and event data can all be stored in a consistent way that allows for easy, consistent manipulation and analysis. 
 
 ---
 
 # 4. Conceptual pathway of data from c3d to OpenSim
+	
+	btk_loadc3d invokes the btk functions and sorts the data into a structured .mat format. This format is then dealt with in a typically procedural way until the required .trc and .mot files are produced. 
 
+	The functions in this pathway are shown in the figure below (refer to figure in imageWorks.pptx, page 2) to be transformed into OpenSim data 
 
 ---
 
-# 5. Function Documentation
+# 5. A note on filtering
+
+	Before we discribe the processes, its important to note that we have commented out the filters in the main pipeline (c3d2OpenSim.m). We do not recommend any specific type of filter, nor do we recommend cut off frequencies/orders etc. 
+
+	We give some simple filters and some code to achieve filtering if needed. Further development of filters in the pipeline would be very useful, and methods of doing this consistantly without curruption of the signal is sorely needed. 
 
 ---
 
 # 5. Function Documentation
 ## rotateCoordinateSys()
 
----
+	Assumed orientation in OpenSim = 	X (long Axis, forward/back)
+										Y (up)
+										Z (90 degrees to x-y plane)
+	One thing is almost impossible to automate is the orienation of your lab
+	relative to the OpenSim definition. 
+	We assume that X is the long axis of your lab and Y is up. For most labs 
+	who have long axis X and Z up, this only requires a 90 degree rotation about X. 
 
-# 5. Function Documentation
-## filterData()
+	If your lab is in some other orientation, you will just need to do 2  
+	rotations to put your data in the aforementioned orientation 	
+
+	'one rotation about x'
+    rotation.axis = {'x'};
+    rotation.value= [90];
+
+    'two rotations when the lab frame has Y as the long axis and Z is up'
+    rotation.axis = {'z' 'x'};
+    rotation.value= [90 90];
 
 ---
 
 # 5. Function Documentation
 ## forces2Global()
 
+	Currently, all the rotations for forces are done on the btk side, and
+	moments are clculated as wrenches. 
+
+	If we want to process the grf and moments, and calculate the cleaned
+	COP, we will need to take the raw analog signal off the forceplates 
+	and recalculate many of these things. 
+
+	This will be alot easier and less prone to errors once we are able
+	access the orientation of the forceplate frame in the global. At the 
+	moment we do not have that information. 
+
+	Since the channels are based in the forceplate coordinate system,
+	we have to rotate these into the system of the global. What is supplied 
+	is the transformed forces located in structData.fp_data.GRF_data.F
+	Using this data, we can do a series of comparisons and then rotate
+	the processed channel data so that it is in the coorect coordinate
+	system for calculating COP. 
+
+	In is not elegant by any means, but it works. This is function that could
+	use a large overhaul. 
+
 ---
 
 # 5. Function Documentation
 ## grfProcessing()
+	
+	We take out any bias in the force plates by observing the signal over the 
+	first 100 frames and then subtracting the mean from the entire signal. 
+
+	We also find when the vertical grf is below a user specified threshold and
+	'zero' all forces and moment at those times.
+
+	The value of this threshold will depend on the noise in your data as well 
+	as a number of other factors centered around signal processing. 
 
 ---
 
 # 5. Function Documentation
-## copCalc()
+## copCalc_opensim()
+
+	With processed forces and moments, we recalculate the COP. This particular function assumes that the forces and moments have been rotated into the 
+	OpenSim frame. there is an included function that doesnt. 
+
+	We also calculate the free moment of the forceplate. This is saved as
+	the moment that we wish to output to OpenSim.  
 
 ---
 
 # 5. Function Documentation
 ## connectBody2Forces()
+
+	OpenSim connects bodies to forces using an external loads file. However
+	it can be easier if we allocate the external forces to bodies,
+    rather than force(plate) instruments. 
+    This code abstracts the number of inputs so you can have as many bodies
+    and force's as collected.
+    At each time point, forces are allocating to each body based on the 
+    closest body to each force location (COP). 
+
+    Again, this has some sub-functions and the implementation can be cleaner.
 
 ---
 

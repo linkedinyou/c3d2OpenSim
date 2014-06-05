@@ -1,5 +1,7 @@
 function structData = replaceZerosWNaNs(structData)
 %% replaceZerosWNaNs()
+%   btk outputs marker frames with no vales as zero's. In openSim, zero's
+%   are interpreted literally
 %    Replaces zero values of marker data with NaN's
 
 mkrNames = fieldnames(structData.marker_data.Markers);
