@@ -80,9 +80,11 @@ printTRC(structData.marker_data.Markers,...         % Markers
          structData.marker_data.Info.frequency,...  % video freq
          structData.marker_data.Filename);          % filename
 
-%% Read the Forces, moments and Force plate dimensions from trial%%%
+%% Read the Forces, moments and Force plate dimensions from trial
+%    Check first to see if the trial is not a static and/or if it has force
+%    data in it at all.
 if isempty(findstr(lower(structData.marker_data.Filename),'static'))   
-   
+if check4forces( structData )
 
     
 %% Number of forceplates
@@ -125,7 +127,7 @@ end
 printMOT(structData)       
         
 end
-
+end
 end
 
 
