@@ -134,18 +134,6 @@ if ~isempty(fieldnames(analogs))
     data.analog_data = analog_data;
 end
 
-% get analog data
-[analogs, analogsInfo] = btkGetAnalogs(acq);
-if ~isempty(fieldnames(analogs))
-    analog_data.Channels = analogs;
-    analog_data.Info = analogsInfo;
-    analog.data.Info.NumFrames = btkGetAnalogFrameNumber(acq);
-    analog_data.Time = (1/analog_data.Info.frequency:1/analog_data.Info.frequency:...
-        analog.data.Info.NumFrames/analog_data.Info.frequency)';
-    % write to data structure
-    data.analog_data = analog_data;
-end
-
 % get the forceplate info (corners etc)
 [FPs, FPsInfo] = btkGetForcePlatforms(acq);
 if ~isempty(FPs)
