@@ -1,4 +1,4 @@
-function [ FData ] = filterData(oData, Fcut, N, filtType, rate)
+function [ FData ] = filterDataSet(oData, Fcut, N, filtType, rate)
 %   Runs a buttterworth filter on the oData
 %   Fcut_butt =     Cut off Frequency
 %   Rate      =     Sampling frquency of the oData
@@ -6,8 +6,14 @@ function [ FData ] = filterData(oData, Fcut, N, filtType, rate)
 
 
 
-% Check to see if data is a matrix 
-if  isstruct(oData) 
+% Check to see if data is a matrix or structure
+
+if ~isstruct(oData) && ismatrix(oData)
+    % Filter the data matrix
+    [FData] = filtfiltData(oData,Fcut, N, filtType, rate);
+
+
+elseif  isstruct(oData) 
     % iterate over the fields to filter
     fields = fieldnames(oData);
     nFields = length(fields) ;
@@ -22,17 +28,15 @@ if  isstruct(oData)
     end
     
     
-
-elseif ~isstruct(oData) && ismatrix(oData)
-    % Filter the data matrix
-    [FData] = filtfiltData(oData,Fcut, N, filtType, rate);
-    
 else
     error('Data input type for filter is not correct. Check input data is a matrix or struct')
     
 end
     
 end
+
+
+
 
 
 function [fltData] = filtfiltData(data,Fcut, N, filtType, rate)
