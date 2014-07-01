@@ -1,4 +1,4 @@
-function [bodyForce_data] = connectForces2Bodies(structData, footMks);                                      
+function [bodyForce_data] = connectForces2Bodies(structData, footMks, nFeet);                                      
 %connectbody2Forces() assigns forces to body rather than forceplates.
 %   OpenSim connects bodies to forces using an external loads file. However
 %   it can be easier if we allocate the external forces to bodies,
@@ -18,10 +18,8 @@ function [bodyForce_data] = connectForces2Bodies(structData, footMks);
 
 if  isnumeric(footMks)
     feetMkrs = findFeetMarkers(structData, footMks);    
-    nFeet = 2;
 else
     feetMkrs = footMks;
-    nFeet = 2
 end
 
 
