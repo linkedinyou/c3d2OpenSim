@@ -47,7 +47,7 @@ end
     rotation.axis = {'x'};
     rotation.value= [90];
 
-%% Keep marker list 
+% Keep marker list 
     % Pass a list of markers that you would like to keep. 
     useMkrList = false;
     % keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
@@ -60,7 +60,7 @@ end
     % Filter the data (true/false)
     filterData  = false;
     % marker filter properties 
-    % Fcut   = 10; N    = 4;    filtType = 'butt';
+    Fcut   = 10; N    = 4;    filtType = 'butt';
     % set a threshold to zero under
     zeroThres = 6;
 
@@ -73,8 +73,8 @@ end
     % be ordered similiarly to the example shown below. if numeric, then
     % nFeet MUST == 2. 
     forces2Bodies = false;
+    footMks = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'};
     % footMks = 3;
-    % footMks = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'};
     % nFeet   = 2
     
     
