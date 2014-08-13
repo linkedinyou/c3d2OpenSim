@@ -73,7 +73,7 @@ end
     % be ordered similiarly to the example shown below. if numeric, then
     % nFeet MUST == 2. 
     forces2Bodies = false;
-    footMks = {'RCAL' 'RMT1' 'RMT2' 'LCAL' 'LMT1' 'LMT2'};
+    footMks = {'R_Heel' 'R_Toe' 'R_MT5' 'L_Heel' 'L_Toe' 'L_MT5'};
     % footMks = 3;
     % nFeet   = 2
     
