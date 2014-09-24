@@ -58,7 +58,7 @@ end
     
 % data processing
     % Filter the data (true/false)
-    filterData  = false;
+    filterData  = true;
     % marker filter properties 
     Fcut   = 10; N    = 4;    filtType = 'butt';
     % set a threshold to zero under
@@ -118,7 +118,11 @@ if check4forces( structData )
 %%  
     structData = forces2Global(structData);    
     
-%% Rotate into OpenSim Frame
+%% calculate COP    
+   structDataTest = copCalc(structData);  
+
+
+    %% Rotate into OpenSim Frame
 
 for i = 1 : nFP
     % Forces
@@ -141,7 +145,7 @@ else
 end
 
 %% Calculate COP 
-    structData = copCalc_openSim(structData);
+    %structData = copCalc_openSim(structData);
 
 %% Change the forces from a forceplate allocation to a body allocation
 
