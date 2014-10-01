@@ -65,17 +65,23 @@ for i = 1 : length(structData.fp_data.GRF_data)
 
     end
     
- 
-end
     
-     
+%     hold on 
+%     plot(globalForces,'r')
+%     plot(fpForces,'k')
+%  
+
+
     structData.fp_data.GRF_data(i).F_original = structData.fp_data.GRF_data(i).F;
     structData.fp_data.GRF_data(i).M_original = structData.fp_data.GRF_data(i).M;
 
-    
     % Save the rotated values back to the structure to be used in copCalc()
     structData.fp_data.GRF_data(i).F = fpForces;
     structData.fp_data.GRF_data(i).M = fpMoments;
+end
+    
+     
+   
 
 end    
 

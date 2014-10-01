@@ -55,14 +55,13 @@ end
     %             'LASI' 'RTHI' 'RHEE' 'LTHI'...
     %             'LTOE' 'LHEE' 'SACR'};    
     
-    
 % data processing
     % Filter the data (true/false)
     filterData  = true;
     % marker filter properties 
-    Fcut   = 10; N    = 4;    filtType = 'butt';
-    % set a threshold to zero under
-    zeroThres = 6;
+    filterProp.Fcut     = 40;
+    filterProp.N        = 4;
+    filterProp.filtType = 'crit';
 
 % Connect2bodies. 
     % Specify if you would like the forces to be connected to a 'body'.
@@ -92,7 +91,10 @@ structData = replaceZerosWNaNs(structData);
 if filterData
    structData.marker_data.Markers...
                  = filterDataSet(structData.marker_data.Markers...
-                 ,Fcut,N,filtType,structData.marker_data.Info.frequency);
+                 ,filterProp.Fcut...
+                 ,filterProp.N...
+                 ,filterProp.filtType...
+                 ,structData.marker_data.Info.frequency);
 end 
 %% Rotate the structData into the coodinate system of OpenSim
 % set of ordered rotations to be completed
@@ -118,37 +120,24 @@ if check4forces( structData )
 %%  
     structData = forces2Global(structData);    
     
+
+%% Processing of the GRF structData will include taking bias out of the 
+%   forceplate, zeroing below a threshold, and perhaps filtering. 
+    [structData] = grfProcessing(structData,filterProp);
+
 %% calculate COP    
    structDataTest = copCalc(structData);  
 
-
-    %% Rotate into OpenSim Frame
+%% Rotate into OpenSim Frame
 
 for i = 1 : nFP
     % Forces
     [structData.fp_data.GRF_data(i)] = ...
                     rotateCoordinateSys(structData.fp_data.GRF_data(i),...
                                         rotation);
-                                    
-    [structData.fp_data.FP_data(i).corners] = ...
-                    rotateCoordinateSys(structData.fp_data.FP_data(i).corners,...
-                                        rotation);
 end
-
-%% Processing of the GRF structData will include taking bias out of the 
-%   forceplate, zeroing below a threshold, and perhaps filtering. 
-   
-if filterData
-    [structData] = grfProcessing(structData,zeroThres,Fcut,N,filtType);
-else
-    [structData] = grfProcessing(structData,zeroThres);
-end
-
-%% Calculate COP 
-    %structData = copCalc_openSim(structData);
 
 %% Change the forces from a forceplate allocation to a body allocation
-
 if forces2Bodies 
     structData.fp_data.GRF_data = connectForces2Bodies(structData, footMks, nFeet);
 end

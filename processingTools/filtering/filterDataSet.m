@@ -7,10 +7,12 @@ if strcmp('butt',filtType)
     [b a] = butCoeff(rate, Fcut, N); 
 elseif strcmp('crit',filtType)
     [b a] = critCoeff(rate, Fcut, N);
+else 
+    [b a] = critCoeff(rate, Fcut, N);
 end
 
 if  ~isstruct(oData) && ismatrix(oData)
-
+    
     [m n]   = size(oData);
     fltData = [];
     rows2beFiltered = [];
@@ -23,7 +25,7 @@ if  ~isstruct(oData) && ismatrix(oData)
             r1 = rows2beFiltered(k,1);
             r2 = rows2beFiltered(k,2);
             if length(r1:r2)>3*N
-                fData(r1:r2,i)   = filtfilt(b, a, oData( r1:r2,i) );
+                fData(r1:r2,i)   = filtfilt(a, b, oData( r1:r2,i) );
             else
                 fData(r1:r2,i)   = oData( r1:r2 ,i);
             end
@@ -88,17 +90,20 @@ end
 
 function [b a] = critCoeff(rate, Fcut, N)
     % Critically damped filter coeffecients
-    Ccrit = 1/sqrt(2^(1/(2*N))-1);
-    Fcrit = Fcut * Ccrit;
-    Wn= tan((pi*Fcrit)/Fcut);
-    K1= 2*Wn;
-    K2=(Wn)^2;a0 = K2 / (1 + K1 + K2);
-    a1 = 2 * a0;
-    a2 = a0;
-    b1 = 2*a0 * (1/K2 - 1);
-    b2 = 1 - (a0 + a1 + a2 + b1);
-    a = [a0 a1 a2];
-    b = [1 -b1 -b2];
+Ccrit = 1/sqrt(2^(1/(2*N))-1);
+Fcrit = Fcut * Ccrit;
+Wn= tan((pi*Fcrit)/rate);
+K1=2*Wn;
+K2=(Wn)^2;
+a0 = K2 / (1 + K1 + K2);
+a1 = 2 * a0;
+a2 = a0;
+b1 = 2*a0 * (1/K2 - 1);
+b2 = 1 - (a0 + a1 + a2 + b1);
+
+a = [a0 a1 a2];
+b = [1 -b1 -b2];
+    
 end
 
 
