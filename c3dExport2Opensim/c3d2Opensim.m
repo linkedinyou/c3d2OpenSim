@@ -55,13 +55,11 @@ end
     %             'LASI' 'RTHI' 'RHEE' 'LTHI'...
     %             'LTOE' 'LHEE' 'SACR'};    
     
-% data processing
-    % Filter the data (true/false)
-    filterData  = true;
-    % marker filter properties 
-    filterProp.Fcut     = 40;
-    filterProp.N        = 4;
-    filterProp.filtType = 'crit';
+% Filter properties
+    filterProp.bool     = 1;            % Filter the data (true/false)
+    filterProp.Fcut     = 40;           % Filter cut-off 
+    filterProp.N        = 4;            % Filter order
+    filterProp.filtType = 'crit';       % Filter crit
 
 % Connect2bodies. 
     % Specify if you would like the forces to be connected to a 'body'.
@@ -88,14 +86,9 @@ end
 structData = replaceZerosWNaNs(structData);
 
 %% Filter Mkrs
-if filterData
-   structData.marker_data.Markers...
-                 = filterDataSet(structData.marker_data.Markers...
-                 ,filterProp.Fcut...
-                 ,filterProp.N...
-                 ,filterProp.filtType...
-                 ,structData.marker_data.Info.frequency);
-end 
+structData.marker_data.Markers = filterDataSet(structData.marker_data.Markers, filterProp, structData.marker_data.Info.frequency);           
+
+                 
 %% Rotate the structData into the coodinate system of OpenSim
 % set of ordered rotations to be completed
 
@@ -117,16 +110,15 @@ if check4forces( structData )
 %% Number of forceplates
     nFP = length(structData.fp_data.Info);
     
-%%  
+%%  Rotate the forceplate data (forces and moments) to the global
     structData = forces2Global(structData);    
-    
 
 %% Processing of the GRF structData will include taking bias out of the 
 %   forceplate, zeroing below a threshold, and perhaps filtering. 
-    [structData] = grfProcessing(structData,filterProp);
+   [structData] = grfProcessing(structData, filterProp, 0, 1);
 
 %% calculate COP    
-   structDataTest = copCalc(structData);  
+   structData = copCalc(structData);  
 
 %% Rotate into OpenSim Frame
 

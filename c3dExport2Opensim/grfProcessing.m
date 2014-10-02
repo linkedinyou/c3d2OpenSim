@@ -1,55 +1,61 @@
-function [structData] = grfProcessing(structData, filterProp)
+function [structData] = grfProcessing(structData, filterProp, zeroOffsets, thresholdChannels)
 %grfProcessing() Processes raw force and moment data
-%   Detailed explanation goes here
+% structData            Structure with forceplate data located in the 
+%                           form structData.fp_data.GRF_data(i).F
+%
+% filterProp            Structure holding cut off frquency, order and filtertype      
+%
+% zeroOffsets          Bool (0 or 1) indicating if the channels need to be    
+%                           zeroed due to an offset in the values
+%
+% thresholdChannels     Bool (0 or 1) zeros all forces and moments below a 
+%                         a threshold value of Fz 
 
 % Author: James Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
 % Created: March 2009  Last Update: May 2014
 
-   
-Fcut     =  filterProp.Fcut;
-N        =  filterProp.N;
-filtType =  filterProp.filtType;
-
-
-if nargin == 2
-    filtData = 1;
-else
-    filtData = 0;
-end
 
 for i = 1 : length(structData.fp_data.GRF_data)
 
-    forceNames = fieldnames(structData.fp_data.FP_data(i).channels);
-    
+    % capture rate of the forceplate
     rate = structData.fp_data.Info(i).frequency;
     
+    % Dump out forces and moments for conveniance 
     forces = structData.fp_data.GRF_data(i).F;
     moments = structData.fp_data.GRF_data(i).M;
-    
+
     % get the force and moment channel offset
     forceOffSet  = mean(forces(1:100,:));
     momentOffset = mean(moments(1:100,:));
-    % apply the offsets to the force and moment channels
-    forces = bsxfun(@minus, forces, forceOffSet);
-    moments= bsxfun(@minus, moments, momentOffset);
-        
-    % get the force and moment channel offset
-    zforceNoiseRange = range(forces(1:100,3));
-    zeroFrames = find( forces(:,3) < zforceNoiseRange);
-    forces(zeroFrames,:) = 0;
-    moments(zeroFrames,:) = 0;
-    %plot(forces)
+    
+    if zeroOffsets
+        % apply the offsets to the force and moment channels
+        forces = bsxfun(@minus, forces, forceOffSet);
+        moments= bsxfun(@minus, moments, momentOffset);
+    end
     
     
-    %% Filter Mkrs
-    if filtData
-        forces  = filterDataSet(forces...
-                     ,Fcut,N,filtType,rate);
-        moments = filterDataSet(moments...
-                     ,Fcut,N,filtType,rate);         
-    end 
-    forces(zeroFrames,:) = 0;
-    moments(zeroFrames,:) = 0;
+    if thresholdChannels
+        %Get the rand of noise for the first hundred frames
+        zforceNoiseRange = range(forces(1:100,3));
+        % Find when the fz forces are below this range
+        zeroFrames = find( forces(:,3) < zforceNoiseRange);
+        % zero the forces and momentswhen below that range
+        forces(zeroFrames,:) = 0;
+        moments(zeroFrames,:) = 0;
+    end
+    
+    % Filter the force and moment data
+    if filterProp.bool
+        forces  = filterDataSet(forces , filterProp, rate);
+        moments = filterDataSet(moments, filterProp, rate);         
+    end
+    
+    if thresholdChannels
+        % Clean-up the grf end point bleeding caused by the filter
+        forces(zeroFrames,:) = 0;
+        moments(zeroFrames,:) = 0;
+    end    
     
     % Save the processed data back to the structure
     structData.fp_data.GRF_data(i).F = forces;
@@ -58,4 +64,3 @@ for i = 1 : length(structData.fp_data.GRF_data)
 end
 
 end
-
