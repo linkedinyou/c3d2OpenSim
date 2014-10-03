@@ -1,4 +1,4 @@
-function [bodyForce_data] = connectForces2Bodies(structData, footMks, nFeet);                                      
+function [bodyForce_data] = connectForces2Bodies(structData, body);                                      
 %connectbody2Forces() assigns forces to body rather than forceplates.
 %   OpenSim connects bodies to forces using an external loads file. However
 %   it can be easier if we allocate the external forces to bodies,
@@ -16,34 +16,51 @@ function [bodyForce_data] = connectForces2Bodies(structData, footMks, nFeet);
 %   Written by Thor Besier, James Dunne and Cyril (Jon) Donnelly (2008)
 %   Modifed; James Dunne 2014
 
-if  isnumeric(footMks)
-    feetMkrs = findFeetMarkers(structData, footMks);    
-else
-    feetMkrs = footMks;
-end
+    body.useBodies = 1;
+    body.bodies.rFoot = {'RMT1' 'RMT2' 'RCAL' };
+    body.bodies.lFoot = {'LMT1' 'LMT2' 'LCAL' };
+    
+    bodyNames = fieldnames(body.bodies);
+    nBodies   = length(bodyNames);
+    
+    % Number of forceplate
+    nFP       = length(structData.fp_data.GRF_data);
+    
+    % Number of force samples
+    nForceSamples = length(structData.fp_data.GRF_data(1).F);
+    
+    % Empty matrix to be filled later
+    emptyMatrix   = zeros(nForceSamples,3);
 
+    % Analog sampling rate 
+    aRate = structData.fp_data.Info(1).frequency;
+    
+    % mkr sampling rate 
+    vRate = structData.marker_data.Info.frequency;
+    
+    % Sampling ratio between forces and mkr data
+    samplingRatio =  vRate/aRate;
 
-%% Define some variables and matrices 
-% Number of forceplate
-nFP       = length(structData.fp_data.GRF_data);
-% Number of force samples
-nForceSamples = length(structData.fp_data.GRF_data(1).F);
-% Empty matrix to be filled later
-emptyMatrix   = zeros(nForceSamples,3);
+    % Get a list of the marker Names
+    mkrNames = fieldnames(structData.marker_data.Markers);
+    
+    % Array for number of video samples
+    sampleArray      = 1 : length(structData.marker_data.Markers.(mkrNames{1}));
+    
+    % New Array for 'upsampling' mkr datan
+    upSampleArray   = 1 : samplingRatio : length(sampleArray);    
 
-% Analog sampling rate 
-aRate = structData.fp_data.Info(1).frequency;
-% mkr sampling rate 
-vRate = structData.marker_data.Info.frequency;
-% Sampling ratio between forces and mkr data
-samplingRatio =  vRate/aRate;
+    
+    
+    
 
-% Get a list of the marker Names
-mkrNames = fieldnames(structData.marker_data.Markers);
-% Array for number of video samples
-sampleArray      = 1 : length(structData.marker_data.Markers.(mkrNames{1}));
-% New Array for 'upsampling' mkr datan
-upSampleArray   = 1 : samplingRatio : length(sampleArray);    
+    
+if body.useBodies   
+    
+    
+    
+    
+    
 
 % Create some empty array's for the force, moment and COp data to live
 for u = 1 : nFeet
@@ -108,8 +125,9 @@ for i = 1 : nFP
 end
 
         
-        
+end        
 end
+
 
    
   

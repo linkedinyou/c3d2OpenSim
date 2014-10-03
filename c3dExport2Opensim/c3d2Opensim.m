@@ -55,93 +55,81 @@ end
     %             'LTOE' 'LHEE' 'SACR'};    
     
 % Filter properties
-    filterProp.bool     = 1;            % Filter the data (true/false)
-    filterProp.Fcut     = 40;           % Filter cut-off 
-    filterProp.N        = 4;            % Filter order
-    filterProp.filtType = 'crit';       % Filter crit
+    filterMkr.bool     = 1;            % Filter the data (true/false)
+    filterMkr.Fcut     = 16;           % Filter cut-off 
+    filterMkr.N        = 4;            % Filter order
+    filterMkr.filtType = 'crit';       % Filter crit
 
+    filterFP.bool     = 1;            % Filter the data (true/false)
+    filterFP.Fcut     = 40;           % Filter cut-off 
+    filterFP.N        = 4;            % Filter order
+    filterFP.filtType = 'crit';       % Filter crit
+    
+    
 % Connect2bodies. 
     % Specify if you would like the forces to be connected to a 'body'.
     % This would be used to sort forces into columns that correspond to an
     % external forces file in opensim. 
-    % If true, it the input function can either be the number of markers 
-    % on 1 foot or all the names of the foot markers. If names, they must
-    % be ordered similiarly to the example shown below. if numeric, then
-    % nFeet MUST == 2. 
-    forces2Bodies = false;
-    footMks = {'R_Heel' 'R_Toe' 'R_MT5' 'L_Heel' 'L_Toe' 'L_MT5'};
-    % footMks = 3;
-    % nFeet   = 2
+    body.useBodies = 1;
+    body.bodies.rFoot = {'RMT1' 'RMT2' 'RCAL' };
+    body.bodies.lFoot = {'LMT1' 'LMT2' 'LCAL' };
     
-    
-%% Create subset of markers
+%% Markers
 
-if useMkrList
-    structData = keepMarkersFromList(structData,keepMkrs);    
-end
+    % Keep a subset of the Markers for Printing
+    if useMkrList
+        structData = keepMarkersFromList(structData,keepMkrs);    
+    end
 
-%% Replace zeros with NaNs
-    % replaces marker values == 0, with NaN's
-structData = replaceZerosWNaNs(structData);
+    % Replace zeros with NaNs
+    structData = replaceZerosWNaNs(structData);
 
-%% Filter Mkrs
-structData.marker_data.Markers = filterDataSet(structData.marker_data.Markers, filterProp, structData.marker_data.Info.frequency);           
+    % Filter Mkrs
+    structData.marker_data.Markers = filterDataSet(structData.marker_data.Markers, filterMkr, structData.marker_data.Info.frequency);           
 
-                 
-%% Rotate the structData into the coodinate system of OpenSim
-% set of ordered rotations to be completed
+    % Rotate the structData into the coodinate system of OpenSim
+    [structData.marker_data.Markers] = rotateCoordinateSys(structData.marker_data.Markers,...
+                                                            rotation);
 
-[structData.marker_data.Markers] = rotateCoordinateSys(structData.marker_data.Markers,...
-                                                        rotation);
- 
-%% Print the structData into a OpenSim trc format 
-printTRC(structData.marker_data.Markers,...         % Markers
-         structData.marker_data.Info.frequency,...  % video freq
-         structData.marker_data.Filename);          % filename
+    % Print the structData into a OpenSim trc format 
+    printTRC(structData.marker_data.Markers,...         % Markers
+             structData.marker_data.Info.frequency,...  % video freq
+             structData.marker_data.Filename);          % filename
 
-%% Read the Forces, moments and Force plate dimensions from trial
-%    Check first to see if the trial is not a static and/or if it has force
-%    data in it at all.
-if isempty(findstr(lower(structData.marker_data.Filename),'static'))   
-if check4forces( structData )
+     
+%% Forces, moments and COP.      
+if isempty(findstr(lower(structData.marker_data.Filename),'static')) && check4forces( structData )  
 
-    
-%% Number of forceplates
+    % Number of forceplates
     nFP = length(structData.fp_data.Info);
     
-%%  Rotate the forceplate data (forces and moments) to the global
+    % Rotate the forceplate data (forces and moments) to the global
     structData = forces2Global(structData);    
 
-%% Processing of the GRF structData will include taking bias out of the 
-%   forceplate, zeroing below a threshold, and perhaps filtering. 
-   [structData] = grfProcessing(structData, filterProp, 0, 1);
+    % Processing of the GRF structData will include taking bias out of the 
+    % forceplate, zeroing below a threshold, and perhaps filtering. 
+   [structData] = grfProcessing(structData, filterFP, 0, 1);
 
-%% calculate COP    
+    % Calculate COP    
    structData = copCalc(structData);  
 
-%% Rotate into OpenSim Frame
+    % Rotate Forces into OpenSim Frame
+    for i = 1 : nFP
+        [structData.fp_data.GRF_data(i)] = rotateCoordinateSys(structData.fp_data.GRF_data(i), rotation);
+    end
 
-for i = 1 : nFP
-    % Forces
-    [structData.fp_data.GRF_data(i)] = ...
-                    rotateCoordinateSys(structData.fp_data.GRF_data(i),...
-                                        rotation);
-end
+    % Change the forces from a forceplate allocation to a body allocation
+    structData = connectForces2Bodies(structData, body);
 
-%% Change the forces from a forceplate allocation to a body allocation
-if forces2Bodies 
-    structData.fp_data.GRF_data = connectForces2Bodies(structData, footMks, nFeet);
-end
-%% Convert COP into meters rather than mm
-for i = 1 : length(structData.fp_data.GRF_data)
-    structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
-end    
+    % Convert COP into meters rather than mm
+    for i = 1 : nFP
+        structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
+    end    
    
-%% Print MOT 
-printMOT(structData)       
-        
+    % Print MOT 
+    printMOT(structData)       
 end
-end
+
 end
 
 
