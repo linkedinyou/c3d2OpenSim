@@ -29,7 +29,6 @@ function c3d2Opensim(structData)
 % Created: March 2009  Last Update: Dec 2013 
 
 %% 
-
 if nargin < 1
     [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
     structData = btk_loadc3d(fullfile(pathname,filein), 10);
