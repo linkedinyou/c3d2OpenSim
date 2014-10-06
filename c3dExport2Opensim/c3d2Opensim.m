@@ -121,12 +121,6 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static')) && check4fo
     % Change the forces from a forceplate allocation to a body allocation
     % structData = connectForces2Bodies(structData, body);
 
-    % Convert COP into meters rather than mm
-    for i = 1 : nFP
-        structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
-        structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).M;
-    end    
-   
     % Print MOT 
     printMOT(structData)       
 end

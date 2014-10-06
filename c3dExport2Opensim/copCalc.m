@@ -44,6 +44,11 @@ for i = 1 : length(structData.fp_data.GRF_data)
         Tx = zeros(1,length(Tz))';
         Ty = Tx;
         
+        % go from mm to meters
+        COPx = COPx/1000;    
+        COPy = COPy/1000;
+        Tz   = Tz/1000;
+        
         % take out any Nans
         nNaN    = find(isnan(COPx));
         COPx(nNaN) = 0;
