@@ -55,7 +55,7 @@ end
     %             'LTOE' 'LHEE' 'SACR'};    
     
 % Filter properties
-    filterMkr.bool     = 1;            % Filter the data (true/false)
+    filterMkr.bool     = 0;            % Filter the data (true/false)
     filterMkr.Fcut     = 16;           % Filter cut-off 
     filterMkr.N        = 4;            % Filter order
     filterMkr.filtType = 'crit';       % Filter crit
@@ -70,7 +70,7 @@ end
     % Specify if you would like the forces to be connected to a 'body'.
     % This would be used to sort forces into columns that correspond to an
     % external forces file in opensim. 
-    body.useBodies = 1;
+    body.useBodies = 0;
     body.bodies.rFoot = {'RMT1' 'RMT2' 'RCAL' };
     body.bodies.lFoot = {'LMT1' 'LMT2' 'LCAL' };
     
@@ -108,10 +108,10 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static')) && check4fo
 
     % Processing of the GRF structData will include taking bias out of the 
     % forceplate, zeroing below a threshold, and perhaps filtering. 
-   [structData] = grfProcessing(structData, filterFP, 0, 1);
+    [structData] = grfProcessing(structData, filterFP, 1, 1);
 
     % Calculate COP    
-   structData = copCalc(structData);  
+    structData = copCalc(structData);  
 
     % Rotate Forces into OpenSim Frame
     for i = 1 : nFP
@@ -119,11 +119,12 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static')) && check4fo
     end
 
     % Change the forces from a forceplate allocation to a body allocation
-    structData = connectForces2Bodies(structData, body);
+    % structData = connectForces2Bodies(structData, body);
 
     % Convert COP into meters rather than mm
     for i = 1 : nFP
         structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).P/1000;
+        structData.fp_data.GRF_data(i).P = structData.fp_data.GRF_data(i).M;
     end    
    
     % Print MOT 

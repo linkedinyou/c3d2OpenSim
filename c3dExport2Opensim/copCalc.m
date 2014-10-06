@@ -32,8 +32,15 @@ for i = 1 : length(structData.fp_data.GRF_data)
         COPy =((mx - (zo*fy))./fz) + yo;
         COPz = zeros(length(COPx),1);
         
+        %                 hold on
+        %                 plot(structData.fp_data.GRF_data(i).P(:,1),'k')
+        %                 plot(structData.fp_data.GRF_data(i).P(:,2),'b')
+        %         
+        %                 plot(COPx,'k-')
+        %                 plot(COPy,'b-')
+        
         % Calculate the free moment (Tz) of the forceplate
-        Tz = mz - ((COPx-xo).*fy) + ((COPy-yo).*fx);
+        Tz = mz - ((COPx - xo).*fy) + ((COPy - yo).*fx);
         Tx = zeros(1,length(Tz))';
         Ty = Tx;
         
@@ -49,7 +56,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
         % save the processed COP to the structure
         structData.fp_data.GRF_data(i).P = [COPx COPy COPz];  
         % save the processed Z torque to the structure
-        structData.fp_data.GRF_data(i).Mfree = [Tx Ty Tz];  
+        structData.fp_data.GRF_data(i).M= [Tx Ty Tz];  
          
 end
        

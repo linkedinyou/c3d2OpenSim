@@ -24,17 +24,22 @@ for i = 1 : length(structData.fp_data.GRF_data)
     % Rotate about one of the two axes that are in the plane of the floor.
     % In the first case we rotate about the x axis, 90 degrees at a time, until
     % the Z axes aline. 
-    [fpForces fpMoments] = flipAxisAround(globalForces,fpForces, fpMoments, 'x', 3 );
+    [fpForcesRot fpMomentsRot] = flipAxisAround(globalForces,fpForces, fpMoments, 'x', 3 );
     
     % Now that the Z axes aline, rotate about z until the x and Y components are both equal. 
-    [fpForces fpMoments] = flipAxisAround(globalForces,fpForces, fpMoments, 'z', 1 );
+    [fpForcesRot fpMomentsRot] = flipAxisAround(globalForces,fpForcesRot, fpMomentsRot, 'z', 1 );
     
     structData.fp_data.GRF_data(i).F_original = structData.fp_data.GRF_data(i).F;
     structData.fp_data.GRF_data(i).M_original = structData.fp_data.GRF_data(i).M;
 
     % Save the rotated values back to the structure to be used in copCalc()
-    structData.fp_data.GRF_data(i).F = fpForces;
-    structData.fp_data.GRF_data(i).M = fpMoments;
+    structData.fp_data.GRF_data(i).F = fpForcesRot;
+    structData.fp_data.GRF_data(i).M = fpMomentsRot;
+    
+    %       
+    %     hold on
+    %     plot(fpForces)
+    %     plot(fpForcesRot, '.')
 end
 
 end    
