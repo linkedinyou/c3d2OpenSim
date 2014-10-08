@@ -39,7 +39,7 @@ trcData     =   [frameArray timeArray markerArray];
     trcFileName     = fullfile(pathstr, [name '.trc']);
     fid             = fopen(trcFileName,'w');
     
-    fprintf('\n      Printing marker trajectory file     ');
+    display('   Printing marker trajectory file');
     
     % Print header information
     fprintf(fid,'PathFileType\t4\t(X/Y/Z)\t%s\n',name);

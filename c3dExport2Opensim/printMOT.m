@@ -66,8 +66,8 @@ analogRate   = structData.fp_data.Info(1).frequency;
     motFileName      = fullfile(pathstr, [name '_grf.mot']);
     fid              = fopen(motFileName,'w');
     
-    fprintf('\n      Printing .MOT File              ');
-    
+    display('   Printing marker external loads file');
+     
     % Print trial header
     fprintf(fid,'name %s\n',name);
     fprintf(fid,'datacolumns %d\n',n);

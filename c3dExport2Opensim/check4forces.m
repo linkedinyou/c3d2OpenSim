@@ -4,7 +4,7 @@ function [ outPut ] = check4forces( structData )
 %   present. 
 
 % get the list of the names in the strucutre
-fNames =  fieldnames(structData)
+fNames =  fieldnames(structData);
 % pre define the output to be zero
 outPut = 0;
 % cycle through the fieldnames and string match at each one    

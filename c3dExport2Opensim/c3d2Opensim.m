@@ -32,7 +32,16 @@ function c3d2Opensim(structData)
 if nargin < 1
     [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
     structData = btk_loadc3d(fullfile(pathname,filein), 10);
+elseif nargin ==1
+    if ~isstruct(structData)
+        % structData is a path to a c3d file.
+        [PATH,NAME,EXT] = fileparts(structData);
+        display(['processing trial ' NAME])
+        structData = btk_loadc3d(structData, 10);
+    end    
 end
+
+
 
 %% Set Manual Values 
     
