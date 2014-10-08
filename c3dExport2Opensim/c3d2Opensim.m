@@ -55,7 +55,7 @@ end
     %             'LTOE' 'LHEE' 'SACR'};    
     
 % Filter properties
-    filterMkr.bool     = 0;            % Filter the data (true/false)
+    filterMkr.bool     = 1;            % Filter the data (true/false)
     filterMkr.Fcut     = 16;           % Filter cut-off 
     filterMkr.N        = 4;            % Filter order
     filterMkr.filtType = 'crit';       % Filter crit

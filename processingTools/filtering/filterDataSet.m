@@ -10,12 +10,12 @@ filtType = filterProp.filtType;
 
 %% Determine filter coeffecients from the the filter properties.
 if strcmp('butt',filtType)
-        [a b] = butCoeff(rate, Fcut, N); 
+        [a b] = butCoeff(rate, Fcut); 
 elseif strcmp('crit',filtType)
-        [a b] = critCoeff(rate, Fcut, N);
+        [a b] = critCoeff(rate, Fcut);
 else  
         warning('Filter type incorrectly defined, using butterworth typ')
-        [a b] = butCoeff(rate, Fcut, N); 
+        [a b] = butCoeff(rate, Fcut); 
 end
 
 
