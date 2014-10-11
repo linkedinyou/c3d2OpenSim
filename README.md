@@ -2,6 +2,31 @@ motionProcessing
 ================
 Matlab code for processing c3d motion data and modeling using the OpenSim API. 
 
+## Quick Start ## 
+
+1. Download btk-c3d software and put in Matlab path.
+The matlab (64-bit tested) binaries can be downloaded from here; https://code.google.com/p/b-tk/wiki/MatlabBinaries
+
+2. Download zip of this project. Unzip folder and put in Matlab Path.
+
+3. Type 'c3d2OpenSim' in the Matlab command window. If installation of the previous steps has been successful, a selection window will appear. Select a c3d file. A marker file (.trc) and a ground reaction force file (.mot) will be created. 
+
+4. You can setup a batch script by sending it a path to a c3d file ie c3d2Opensim('C:\MoCapData\subject1_trial1.cd').
+
+5. If you have issues, please post to the issue section on Github
+
+Gdluck and please contribute back to the code. 
+
+## Limitations and known issues ##
+
+- We only support Force platforms of type 2 and 4. The outputs of the forceplate must be 3 forces (fx,fy,fz) and three moments (mx,my,mz). If you have unsupported force plates, please post a request. 
+
+- The c3d must have at least marker data in it. You don't need to have forces. 
+
+- The string 'static' in the name of the c3d file will skip any force processing and just generate a .trc.  
+
+- We don't process other types of analog data (EMG). This will be in a future release.  
+
 ## Acknowledgements ##
 
 First, we would like to acknowledge Arnaud Barre and Stephane Armand for their wonderful BTK (Biomechanical Toolkit) software, which is used for c3d reading. We are sure that we are not leveraging it as much as we could. Please support the btk project. 
@@ -9,16 +34,6 @@ First, we would like to acknowledge Arnaud Barre and Stephane Armand for their w
 Barre, A. Armand, S. (2014) Biomechanical ToolKit: Open-source framework to visualize and process biomechanical data. Computer methods and programs in biomedicine. 114:1 Page: 80 - 87 (http://www.sciencedirect.com/science/article/pii/S0169260714000248)
 
 We would also like to acknowledge Thor Besier (U Ackland), Cyril Donnelly (U Western Australia) and Glen Litchwark (U Queensalnd) for their significant code contributions to the c3d2OpenSim pipeline. 
-
-## Software and Documentation ##
-
-This uses the btk_matlab c3d reading function (https://code.google.com/p/b-tk/) in aid of converting c3d file formats to opensim ready formats. The matlab (64-bit tested) binaries can be downloaded from here; https://code.google.com/p/b-tk/wiki/MatlabBinaries
-
-OpenSim is an OpenSource musculoskeletal software package developed at Stanford University. You can download OpenSim here (https://simtk.org/project/xml/downloads.xml?group_id=91).
-
-You can find pdf documentation in the 'documentation' folder. 
-
-Gdluck and please contribute back to the code. 
 
 ## Licensing ##
 Licensed under the Apache License, Version 2.0 (the "License");         
