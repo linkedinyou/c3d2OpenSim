@@ -1,17 +1,17 @@
-motionProcessing
+c3d2Opensim
 ================
 Matlab code for processing c3d motion data and modeling using the OpenSim API. 
 
-## Quick Start ## 
+## Quick Start 
 
 1. Download btk-c3d software and put in Matlab path.
 The matlab (64-bit tested) binaries can be downloaded from here; https://code.google.com/p/b-tk/wiki/MatlabBinaries
 
 2. Download zip of this project. Unzip folder and put in Matlab Path.
 
-3. Type 'c3d2OpenSim' in the Matlab command window. If installation of the previous steps has been successful, a selection window will appear. Select a c3d file. A marker file (.trc) and a ground reaction force file (.mot) will be created. 
+3. Type 'c3d2Opensim' in the Matlab command window. If previous steps have been completed successfully, a selection window will appear and by selecting a c3d file, a marker file (.trc) and a ground reaction force file (.mot) will be created. 
 
-4. You can setup a batch script by sending it a path to a c3d file ie c3d2Opensim('C:\MoCapData\subject1_trial1.cd').
+4. You can setup a batch script by sending it a path to a c3d file ie c3d2Opensim('C:\MoCapData\subject1_trial1.c3d').
 
 5. If you have issues, please post to the issue section on Github
 
