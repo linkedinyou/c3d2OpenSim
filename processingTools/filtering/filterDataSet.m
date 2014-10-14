@@ -14,7 +14,7 @@ if strcmp('butt',filtType)
 elseif strcmp('crit',filtType)
         [a b] = critCoeff(rate, Fcut);
 else  
-        warning('Filter type incorrectly defined, using butterworth typ')
+        warning('Filter type incorrectly defined, using butterworth type')
         [a b] = butCoeff(rate, Fcut); 
 end
 

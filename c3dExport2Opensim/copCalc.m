@@ -1,6 +1,6 @@
-function [structData] = zopCalc(structData)
-% Calculates the COP from force and moment data 
-%   Assumes all forces, moments and forceplate zoordinates
+function [structData] = copCalc(structData)
+% Calculates the COP and Free moment from force and moment data 
+%   
 
 % Written by Thor Besier, James Dunne, Cyril (Jon) Donnelly, 2008
 % Last Modified; James Dunne, September (2014).     
@@ -44,7 +44,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
         Tx = zeros(1,length(Tz))';
         Ty = Tx;
         
-        % go from mm to meters
+        % Go from mm to meters
         COPx = COPx/1000;    
         COPy = COPy/1000;
         Tz   = Tz/1000;

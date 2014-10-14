@@ -16,11 +16,15 @@ function [bodyForce_data] = connectForces2Bodies(structData, body);
 %   Written by Thor Besier, James Dunne and Cyril (Jon) Donnelly (2008)
 %   Modifed; James Dunne 2014
 
-    body.useBodies = 1;
-    body.bodies.rFoot = {'RMT1' 'RMT2' 'RCAL' };
-    body.bodies.lFoot = {'LMT1' 'LMT2' 'LCAL' };
-    
+
+    if ~body.useBodies
+        bodyForce_data = structData.fp_data.GRF_data;
+        return
+    end
+    % get body names
     bodyNames = fieldnames(body.bodies);
+
+    % number of bodies
     nBodies   = length(bodyNames);
     
     % Number of forceplate
@@ -50,70 +54,69 @@ function [bodyForce_data] = connectForces2Bodies(structData, body);
     % New Array for 'upsampling' mkr datan
     upSampleArray   = 1 : samplingRatio : length(sampleArray);    
 
-    
-    
-    
+    % Create some empty array's for the force, moment and COp data to live
+    for u = 1 : nBodies
+        bodyForce_data(u,1).F   = zeros(size(structData.fp_data.GRF_data(u).F));
+        bodyForce_data(u,1).M   = zeros(size(structData.fp_data.GRF_data(u).F));
+        bodyForce_data(u,1).P   = zeros(size(structData.fp_data.GRF_data(u).F));
+    end
 
-    
-if body.useBodies   
-    
-    
-    
-    
-    
-
-% Create some empty array's for the force, moment and COp data to live
-for u = 1 : nFeet
-    bodyForce_data(u,1).F   = zeros(size(structData.fp_data.GRF_data(u).F));
-    bodyForce_data(u,1).M   = zeros(size(structData.fp_data.GRF_data(u).F));
-    bodyForce_data(u,1).P   = zeros(size(structData.fp_data.GRF_data(u).F));
+%% check to see if valid input marker list. If not, exit from function
+mkrList = [];
+for i = 1 : nBodies
+    mkrList = [mkrList body.bodies.(bodyNames{i})]; 
 end
 
+for i = 1 : length(mkrList)
+    % check that the input input body markers are in the trial. If not,
+    % exit the function.
+    if isempty(find(ismember(mkrNames,char(mkrList(i)))));
+       bodyForce_data = structData.fp_data.GRF_data;
+       display(['WARNING: Input body based marker ' char(mkrList(i)) ' not in trial, exiting function']) 
+       return
+    end
+end
 
 %% get the centroid of the body mkrs
-
-for i = 1 : nFeet
-     % establish the index based on i 
-     u = (3*i)-2:(3*i);
+for i = 1 : nBodies
      % Calculate the centroid of the three mkrs and save to struct
-     structData.marker_data.bodyCenter(i).data =...
-                   (structData.marker_data.Markers.(feetMkrs{u(1)}) + ...
-                   structData.marker_data.Markers.(feetMkrs{u(2)})  + ...
-                   structData.marker_data.Markers.(feetMkrs{u(3)}))   ...
-                   / 3;
-   
-               
-    
+     for u = 1 : 3
+         body.bodyPoint.(bodyNames{i}) = ...
+                 (structData.marker_data.Markers.(char(body.bodies.(bodyNames{i})(1))) + ...
+                 structData.marker_data.Markers.(char(body.bodies.(bodyNames{i})(2))) + ...
+                 structData.marker_data.Markers.(char(body.bodies.(bodyNames{i})(3))) )  ...
+                 /3 ;
+     end
 end
-    
+
 %% Upsample the mkr data to match the forceplate data
-for i = 1 : nFeet
+for i = 1 : nBodies
     % upsample the body data
-    structData.marker_data.bodyCenter(i).data =...
+    body.bodyPoint.(bodyNames{i}) =...
                           interp1(sampleArray',...                      % Old sample freq
-                          structData.marker_data.bodyCenter(i).data,...    % Foot center mkr
+                          body.bodyPoint.(bodyNames{i}),...             % body point
                           upSampleArray');                              % new sample freq 
 end     
 
   
-%% Loop through the each frame of force data and comapare the distance 
-%    between the feet centers and the COP. The closest distance will cause
-%    an allocation of that force to that body. 
+%% Loop through each frame of each forces and sort the forces into body 
+%   system based arrays. Sorting is done by comparing each body location
+%   with tne force location (COP) and determining which body is cloest. 
 
 
 for i = 1 : nFP
 
     % Find the frames when the vertical GRF is non-zero
     forceFrames = find(structData.fp_data.GRF_data(i).F(:,2) > 0);
-    % The global location of the force
-    COP = structData.fp_data.GRF_data(i).P;
+    % The global location of the force (in mm)
+    COP = structData.fp_data.GRF_data(i).P*1000;
 
     % Get the distance of the force to each body
-    for u = 1 : nFeet
+    for u = 1 : nBodies
           dist(:,u) = MarkerDistance(COP(forceFrames,:),...
-                                  structData.marker_data.bodyCenter(u).data(forceFrames,:));
+                                  body.bodyPoint.(bodyNames{u})(forceFrames,:));
     end
-    
+
     % Get the index for the closest body
     [minDistance closestBody] =  min(mean(dist));
     
@@ -126,7 +129,6 @@ end
 
         
 end        
-end
 
 
    
@@ -135,6 +137,5 @@ end
      
      
      
-     
-     
+          
      

@@ -1,37 +1,24 @@
 function [oData] = rotateCoordinateSys(oData,rotation)
 % rotateCoordinateSys()
 % Rotates xyz data about an axis. Data is assumed to be an nx3 sized array.
-% Examples would be the xyz coordinates of a marker or the xyz components
-% of a ground reaction force. 
-% This code was originally build to rotate lab coorindates that use an
-% "Z is up" right handed coordinate system to a "Y is up" right handed 
-% coordinate system. This was expanded to be able to rotate any global data
-% frame. The rotation matrices represent a CLOCKWISE rotation relative
-% to fixed coordinate axes, by an angle of Rot. 
 % 
 % Input - oData - either a nX3 matrix or a strucutre containing matrix variables 
 %                 eg oData.LASI = [nx3]
-%         rotation.axis - string denoting which axis the rotation  will be around 
-%                   eg rotAxis = 'x'
-%         Rot   - The rotation about rotAxis in degrees
-%                 eg Rot = 90
+%         rotation - A ordered cell array of axes strings and rotation
+%                    values. rotation = [{'z' 90 'x' 90}] is an ordered  
+%                    rotation of 90 degrees first about the Z then about the X
 %
-% Output - nData - structure format containing rotated matrix data
-%
-% Author: Cyril J Donnelly, James Dunne, Thor Besier.  
-    
-%%  Determine the coordinate to rotate around   
-if ~isstruct(rotation)
-    error('variable "rotation" is not a structure. Please view function help to view variable format')
-end
-    
-nRot = length(rotation.axis);
 
+% Author: Cyril J Donnelly, James Dunne, Thor Besier.  
+% Written: Feb 2009     updated: Oct 2014
+
+%%  Determine the coordinate to rotate around   
+nRot = length(rotation)/2;
 
 for i = 1 : nRot   
-    
-    rotAxis = char(rotation.axis(i));
-    Rot     = rotation.value(i);
+   
+    rotAxis = char(rotation(  i*2-1 ));
+    Rot     = cell2mat(rotation( i*2 ));
     
     % Create roation matrices according to Rot (degrees)   
     RotAboutX1 = [1,0,0;0,cos(Rot*pi/180),-(sin(Rot*pi/180));0,sin(Rot*pi/180),cos(Rot*pi/180)];
@@ -46,8 +33,7 @@ for i = 1 : nRot
         rotationMatrix = RotAboutZ1;
     end
         
-    
-%% Rotate nx3 arrays by the rotation matrix  
+	% Rotate nx3 arrays by the rotation matrix  
     if isstruct(oData)
         fields  = fieldnames(oData);
         nFields = length(fields);

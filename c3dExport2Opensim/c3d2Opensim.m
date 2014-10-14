@@ -10,7 +10,7 @@ function c3d2Opensim(structData)
 %               angles, moments, powers or GRF data
 %           analog_data - analog data (often sampled at a higher rate)often
 %               force plate data and EMG data that might be collected.
-%           grw_data - structure with the position magnitude of ground 
+%           grf_data - structure with the position magnitude of ground 
 %               reaction force vector and moments relative to the global
 %               cooridinate system
 %           fp_info - structure with the force outputs from the force 
@@ -20,13 +20,13 @@ function c3d2Opensim(structData)
 %           sub_info - extra data from the C3D file if it exists, inlcuding
 %               height and weight etc.
 %
-% Output - trialName.trc - a trc file containing marker positions using an 
-%                          "Y is up" right handed frame global system
+% Output - trialName.trc - a trc file containing marker positions using a 
+%                          "Y is up" right handed global frame
 %          trialName.mot - a mot file containing forces, COP and moment
-%          data
-%
+          
+
 % Author: James Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
-% Created: March 2009  Last Update: Dec 2013 
+% Created: March 2009  Last Update: Oct 2014 
 
 %% 
 if nargin < 1
@@ -47,14 +47,10 @@ end
     
 % ordered rotations
     % set of ordered rotations to be completed to take your lab frame into
-    % that of OpenSim. Reminder that the 'x' axis should be the long axis.
-    % If its not, you will have to complete a rotation around 'z' before
-    % you rotate about 'x'
-    % rotation.axis = {'z' 'x'};
-    % rotation.value= [90 90];
-    rotation.axis = {'x'};
-    rotation.value= [90];
-
+    % that of OpenSim. 
+    % rotation = [{'z' 90 'x' 90}];
+    rotation = [{'x' 90 }];
+    
 % Keep marker list 
     % Pass a list of markers that you would like to keep. 
     useMkrList = false;
@@ -77,9 +73,10 @@ end
     
 % Connect2bodies. 
     % Specify if you would like the forces to be connected to a 'body'.
-    % This would be used to sort forces into columns that correspond to an
+    % Use this to sort forces into columns that correspond to an
     % external forces file in opensim. 
-    body.useBodies = 0;
+    body.useBodies = 1;
+    body.order = {'rFoot' 'lFoot'};
     body.bodies.rFoot = {'RMT1' 'RMT2' 'RCAL' };
     body.bodies.lFoot = {'LMT1' 'LMT2' 'LCAL' };
     
@@ -128,7 +125,7 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static')) && check4fo
     end
 
     % Change the forces from a forceplate allocation to a body allocation
-    % structData = connectForces2Bodies(structData, body);
+    structData.fp_data.GRF_data = connectForces2Bodies(structData, body);
 
     % Print MOT 
     printMOT(structData)       

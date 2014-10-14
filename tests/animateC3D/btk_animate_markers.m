@@ -41,15 +41,34 @@ if ~isempty(fp_data)
 end
 
 marker_names = fieldnames(marker_data.Markers);
-% tf = strncmp('C',marker_names,1);
-% marker_names(tf) = [];
-
+mkrIndex = [];
 for i = 1:length(marker_names)
+   % exlcude 'huge' markers that most likely are velocity and/or acc
+   maxVal = max(max(marker_data.Markers.(marker_names{i})));
+   n = abs(floor(log(abs(maxVal))./log(10)));
+   if n > 3
+       mkrIndex = [mkrIndex i];
+       continue
+   end
+   
    Markers.X(:,i) = marker_data.Markers.(marker_names{i})(:,1);
    Markers.Y(:,i) = marker_data.Markers.(marker_names{i})(:,2);
    Markers.Z(:,i) = marker_data.Markers.(marker_names{i})(:,3);
 end
 
+
+% another check to for getting rid of vel & acc markers
+xMean = mean2(Markers.X);
+xStd  = std2(Markers.X);
+for u = 1 : size(Markers.X,2)
+
+   if max(abs(Markers.X(:,u))) > (xMean + 2.2*xStd)
+    Markers.X(:,u) = 0;
+    Markers.Y(:,u) = 0;
+    Markers.Z(:,u) = 0;
+   end
+end    
+   
 figure;
 set(gcf, 'doublebuffer', 'on');
 
@@ -67,10 +86,10 @@ for i = 1:step_size:marker_data.Info.NumFrames
     line([0 0], [0 300], [0 0], 'Color', 'g', 'LineWidth', 3)
     line([0 0], [0 0], [0 300], 'Color', 'r', 'LineWidth', 3)
     xlabel('X'), ylabel('Y'), zlabel('Z')
-%     view(-90,10)
     drawnow
     pause(0.075)
-    %grid on
 end
 
 close(gcf)
+end
+    

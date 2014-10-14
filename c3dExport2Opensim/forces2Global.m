@@ -48,8 +48,7 @@ end
 
 function [fpForces fpMoments] = flipAxisAround(globalForces, fpForces, fpMoments, rotateAround, axisCheck )
 
-    rotation.axis = {rotateAround};
-    rotation.value= [90];
+    rotation = [{rotateAround 90}];
     LoopCounter = 0;
     while round(sum(globalForces(:,axisCheck))) ~= round(sum(fpForces(:,axisCheck)))
         
