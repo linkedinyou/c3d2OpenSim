@@ -1,8 +1,8 @@
-function c3d2Opensim(structData)
+function c3d2Opensim(varargin)
 % c3d2OpenSim()
 % 
 % Function to export struture structData created from btk_btkloadc3d()
-% to .trc (marker structData) and .mot (force structData).  
+% to .trc (marker strutData) and .mot (force structData).  
 %
 % Input - structData - structured data which may contain fields for;
 %           marker_data - any calculated data from the reconstructed C3D
@@ -43,42 +43,10 @@ end
 
 
 
-%% Set Manual Values 
-    
-% ordered rotations
-    % set of ordered rotations to be completed to take your lab frame into
-    % that of OpenSim. 
-    % rotation = [{'z' 90 'x' 90}];
-    rotation = [{'x' 90 }];
-    
-% Keep marker list 
-    % Pass a list of markers that you would like to keep. 
-    useMkrList = false;
-    % keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
-    %             'RTIB' 'RTOE' 'LTIB' 'LANK'...
-    %             'LASI' 'RTHI' 'RHEE' 'LTHI'...
-    %             'LTOE' 'LHEE' 'SACR'};    
-    
-% Filter properties
-    filterMkr.bool     = 1;            % Filter the data (true/false)
-    filterMkr.Fcut     = 16;           % Filter cut-off 
-    filterMkr.N        = 4;            % Filter order
-    filterMkr.filtType = 'crit';       % Filter crit
+%% Set the processing parameters
 
-    filterFP.bool     = 1;            % Filter the data (true/false)
-    filterFP.Fcut     = 40;           % Filter cut-off 
-    filterFP.N        = 4;            % Filter order
-    filterFP.filtType = 'crit';       % Filter crit
+[rotation useMkrList filterProps body ] = setC3d2OpensimPara( varagin(:) )
     
-    
-% Connect2bodies. 
-    % Specify if you would like the forces to be connected to a 'body'.
-    % Use this to sort forces into columns that correspond to an
-    % external forces file in opensim. 
-    body.useBodies = 1;
-    body.order = {'rFoot' 'lFoot'};
-    body.bodies.rFoot = {'RMT1' 'RMT2' 'RCAL' };
-    body.bodies.lFoot = {'LMT1' 'LMT2' 'LCAL' };
     
 %% Markers
 
