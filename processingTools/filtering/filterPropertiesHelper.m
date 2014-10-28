@@ -63,12 +63,6 @@ end
                         end
                  end    
              end
-             % the dataType wasnt found. Skip filtering
-             if i == nFilterProps
-                filterCutOff = 0;
-                filterType   = '';
-                return
-             end
        end
     end
  
