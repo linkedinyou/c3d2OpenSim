@@ -24,29 +24,88 @@ function c3d2Opensim(varargin)
 %                          "Y is up" right handed global frame
 %          trialName.mot - a mot file containing forces, COP and moment
           
-
+% 
+% [rotation, filterProp, body, keepMkrs] = c3d2Opensim(path2file, ...
+%             'rotation',{'z' 120}, ...
+%             'filter',  {'mks' 2 'butt' 'grf' 15 'butt'},...
+%             'mkrList', {'LTH1' 'LTH2'},...
+%             'body',    body)
+           
 % Author: James Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
 % Created: March 2009  Last Update: Oct 2014 
 
 %% 
+
 if nargin < 1
     [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
     structData = btk_loadc3d(fullfile(pathname,filein), 10);
-elseif nargin ==1
-    if ~isstruct(structData)
+elseif nargin >= 1
         % structData is a path to a c3d file.
-        [PATH,NAME,EXT] = fileparts(structData);
+        [PATH,NAME,EXT] = fileparts(char(varargin{1}));
         display(['processing trial ' NAME])
-        structData = btk_loadc3d(structData, 10);
-    end    
+        structData = btk_loadc3d(fullfile(PATH,[NAME EXT]), 10);
 end
 
+%% Define default Properties 
 
-
-%% Set the processing parameters
-
-[rotation useMkrList filterProps body ] = setC3d2OpensimPara( varagin(:) )
+% ordered rotations
+    % set of ordered rotations to be completed to take your lab frame into
+    % that of OpenSim. 
+    % rotation = [{'z' 90 'x' 90}];
+    rotation = [{'x' 90 }];
     
+% Keep marker list 
+    % Pass a list of markers that you would like to keep. 
+    useMkrList = false;
+    keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
+                'RTIB' 'RTOE' 'LTIB' 'LANK'...
+                'LASI' 'RTHI' 'RHEE' 'LTHI'...
+                'LTOE' 'LHEE' 'SACR'};    
+    
+% Filter properties
+    filterProp = {'mrks' 'crit' 16 4  'grf' 'crit' 40 4};
+    
+% Connect2bodies. 
+    % Specify if you would like the forces to be connected to a 'body'.
+    % Use this to sort forces into columns that correspond to an
+    % external forces file in opensim. 
+    body.useBodies = 1;
+    body.order = {'rFoot' 'lFoot'};
+    body.bodies.rFoot = {'rFoot' 'RMT1' 'RMT2' 'RCAL' };
+    body.bodies.lFoot = {'lFoot' 'LMT1' 'LMT2' 'LCAL' };
+
+%% Overide any default properties with user specified ones.
+    
+for i = 1 : nargin
+    % if input string is rotation, next value will be a rotation cell array
+    if ischar(varargin{i})
+        if ~isempty(strfind(varargin{i}, 'rotation'))
+               rotation = varargin{i+1};
+        end
+    end
+    % if input string is filter, next value will be a filter cell array
+    if ischar(varargin{i})
+        if ~isempty(strfind(varargin{i}, 'filter'))
+               filterProp = varargin{i+1};
+        end
+    end
+    % if input string is body, next value will be a body structure
+    if ischar(varargin{i})
+        if ~isempty(strfind(varargin{i}, 'body'))
+               body = varargin{i+1};
+               body.useBodies = 1;
+        end
+    end
+    % if input string is mkrList, next value will be a array of strings
+    if ischar(varargin{i})
+        if ~isempty(strfind(varargin{i}, 'mkrList'))
+               keepMkrs = varargin{i+1};
+        end
+    end
+end
+    
+return
+
     
 %% Markers
 
