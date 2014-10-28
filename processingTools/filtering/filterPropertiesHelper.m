@@ -63,6 +63,12 @@ end
                         end
                  end    
              end
+             % the dataType wasnt found. Skip filtering
+             if i == nFilterProps
+                filterCutOff = 0;
+                filterType   = '';
+                return
+             end
        end
     end
  
@@ -75,11 +81,11 @@ if ~exist('filterType')
     filterType = 'butt';
 end
 
-if nargin == 1
-    display(['filtering with a ' filterType ' filter, at cutoff ' num2str(filterCutOff)])
-elseif nargin == 2
-    display(['filtering data ' dataType ' with a ' filterType ' filter, at cutoff ' num2str(filterCutOff)])
-end
+% if nargin == 1
+%     display(['filtering with a ' filterType ' filter, at cutoff ' num2str(filterCutOff)])
+% elseif nargin == 2
+%     display(['filtering data ' dataType ' with a ' filterType ' filter, at cutoff ' num2str(filterCutOff)])
+% end
 
 
 end

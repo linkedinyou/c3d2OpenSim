@@ -34,21 +34,15 @@ function c3d2Opensim(varargin)
 % Author: James Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
 % Created: March 2009  Last Update: Oct 2014 
 
-%% 
-
-if nargin < 1
-        [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
-        structData = btk_loadc3d(fullfile(pathname,filein), 10);
-elseif nargin >= 1
-        % structData is a path to a c3d file.
-        [PATH,NAME,EXT] = fileparts(char(varargin{1}));
-        display(['processing trial ' NAME])
-        structData = btk_loadc3d(fullfile(PATH,[NAME EXT]), 10);
-end
-
 %% create variable from input arguments. 
     
 for i = 1 : nargin
+     % if input string is rotation, next value will be a rotation cell array
+    if ischar(varargin{i})
+        if ~isempty(strfind(varargin{i}, 'c3dFilePath'))
+               c3dFilePath = varargin{i+1};
+        end
+    end
     % if input string is rotation, next value will be a rotation cell array
     if ischar(varargin{i})
         if ~isempty(strfind(varargin{i}, 'rotation'))
@@ -72,10 +66,22 @@ for i = 1 : nargin
     if ischar(varargin{i})
         if ~isempty(strfind(varargin{i}, 'mrkList'))
                keepMkrs = varargin{i+1};
+               useMkrList = 1;
         end
     end
 end
 
+%% Read the c3d file
+
+if nargin == 0
+        [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
+        structData = btk_loadc3d(fullfile(pathname,filein), 10);
+elseif nargin >= 1
+        % structData is a path to a c3d file.
+        [PATH,NAME,EXT] = fileparts(c3dFilePath);
+        display(['processing trial ' NAME])
+        structData = btk_loadc3d(fullfile(PATH,[NAME EXT]), 10);
+end
 
 %% If input arguments dont exist, create default properties
 
