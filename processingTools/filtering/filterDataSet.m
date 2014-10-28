@@ -1,12 +1,23 @@
-function fltData = filterDataSet(oData, filterProp, rate)
+function fltData = filterDataSet(oData, filterProp, rate, dataType)
 %filterDataSet()
 %  Can take either a matrix or srtucture of matrices and filter them
 %  according to properties found in filterProp.
 
+%% Use a property helper function to get the Fcut and fitler type. 
 
-Fcut =   filterProp.Fcut;
-N    =   filterProp.N;
-filtType = filterProp.filtType;
+if nargin == 3
+    [ Fcut, filtType ] = filterPropertiesHelper(filterProp);
+end
+
+if nargin == 4
+    [ Fcut, filtType ] = filterPropertiesHelper(filterProp, dataType);
+end
+
+if Fcut == 0
+    fltData = oData;
+    display(['   No filtering done on ' dataType])
+    return 
+end
 
 %% Determine filter coeffecients from the the filter properties.
 if strcmp('butt',filtType)
@@ -18,12 +29,10 @@ else
         [a b] = butCoeff(rate, Fcut); 
 end
 
-
 %% Data is a matrix (not a structure)
 if  ~isstruct(oData) && ismatrix(oData)
     fltData  = filterMatrixData(oData, a, b);
 end
-
 
 %% Data is in a structure. Need to read 1 level down to get matrix.
 if isstruct(oData) 

@@ -28,7 +28,7 @@ function c3d2Opensim(varargin)
 % [rotation, filterProp, body, keepMkrs] = c3d2Opensim(path2file, ...
 %             'rotation',{'z' 120}, ...
 %             'filter',  {'mks' 2 'butt' 'grf' 15 'butt'},...
-%             'mkrList', {'LTH1' 'LTH2'},...
+%             'mrkList', {'LTH1' 'LTH2'},...
 %             'body',    body)
            
 % Author: James Dunne, Thor Besier, C.J. Donnelly, S. Hamner.  
@@ -37,8 +37,8 @@ function c3d2Opensim(varargin)
 %% 
 
 if nargin < 1
-    [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
-    structData = btk_loadc3d(fullfile(pathname,filein), 10);
+        [filein, pathname] = uigetfile({'*.c3d','C3D file'}, 'C3D data file...');
+        structData = btk_loadc3d(fullfile(pathname,filein), 10);
 elseif nargin >= 1
         % structData is a path to a c3d file.
         [PATH,NAME,EXT] = fileparts(char(varargin{1}));
@@ -46,35 +46,7 @@ elseif nargin >= 1
         structData = btk_loadc3d(fullfile(PATH,[NAME EXT]), 10);
 end
 
-%% Define default Properties 
-
-% ordered rotations
-    % set of ordered rotations to be completed to take your lab frame into
-    % that of OpenSim. 
-    % rotation = [{'z' 90 'x' 90}];
-    rotation = [{'x' 90 }];
-    
-% Keep marker list 
-    % Pass a list of markers that you would like to keep. 
-    useMkrList = false;
-    keepMkrs = {'LKNE' 'RKNE' 'RASI' 'RANK'...
-                'RTIB' 'RTOE' 'LTIB' 'LANK'...
-                'LASI' 'RTHI' 'RHEE' 'LTHI'...
-                'LTOE' 'LHEE' 'SACR'};    
-    
-% Filter properties
-    filterProp = {'mrks' 'crit' 16 4  'grf' 'crit' 40 4};
-    
-% Connect2bodies. 
-    % Specify if you would like the forces to be connected to a 'body'.
-    % Use this to sort forces into columns that correspond to an
-    % external forces file in opensim. 
-    body.useBodies = 1;
-    body.order = {'rFoot' 'lFoot'};
-    body.bodies.rFoot = {'rFoot' 'RMT1' 'RMT2' 'RCAL' };
-    body.bodies.lFoot = {'lFoot' 'LMT1' 'LMT2' 'LCAL' };
-
-%% Overide any default properties with user specified ones.
+%% create variable from input arguments. 
     
 for i = 1 : nargin
     % if input string is rotation, next value will be a rotation cell array
@@ -96,16 +68,37 @@ for i = 1 : nargin
                body.useBodies = 1;
         end
     end
-    % if input string is mkrList, next value will be a array of strings
+    % if input string is mrkList, next value will be a array of strings
     if ischar(varargin{i})
-        if ~isempty(strfind(varargin{i}, 'mkrList'))
+        if ~isempty(strfind(varargin{i}, 'mrkList'))
                keepMkrs = varargin{i+1};
         end
     end
 end
-    
-return
 
+
+%% If input arguments dont exist, create default properties
+
+% ordered rotations
+if ~exist('rotation')    
+    rotation = [{'x' 90 }];
+end
+
+% keep marker list
+if ~exist('keepMkrs')
+    useMkrList = false;
+end
+
+% filter properties
+if ~exist('filterProp')
+    filterProp = {};
+end
+
+% definition of bodies. 
+if ~exist('body')
+    body.useBodies = 0;
+end
+    
     
 %% Markers
 
@@ -118,8 +111,11 @@ return
     structData = replaceZerosWNaNs(structData);
 
     % Filter Mkrs
-    structData.marker_data.Markers = filterDataSet(structData.marker_data.Markers, filterMkr, structData.marker_data.Info.frequency);           
-
+    structData.marker_data.Markers = filterDataSet(structData.marker_data.Markers,...
+                                                       filterProp,...
+                                                       structData.marker_data.Info.frequency,...
+                                                       'mrks');           
+    
     % Rotate the structData into the coodinate system of OpenSim
     [structData.marker_data.Markers] = rotateCoordinateSys(structData.marker_data.Markers,...
                                                             rotation);
@@ -141,7 +137,7 @@ if isempty(findstr(lower(structData.marker_data.Filename),'static')) && check4fo
 
     % Processing of the GRF structData will include taking bias out of the 
     % forceplate, zeroing below a threshold, and perhaps filtering. 
-    [structData] = grfProcessing(structData, filterFP, 1, 1);
+    [structData] = grfProcessing(structData, filterProp, 1, 1);
 
     % Calculate COP    
     structData = copCalc(structData);  

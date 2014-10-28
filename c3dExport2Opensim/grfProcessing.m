@@ -46,10 +46,9 @@ for i = 1 : length(structData.fp_data.GRF_data)
     end
     
     % Filter the force and moment data
-    if filterProp.bool
-        forces  = filterDataSet(forces , filterProp, rate);
-        moments = filterDataSet(moments, filterProp, rate);         
-    end
+    forces  = filterDataSet(forces , filterProp, rate, 'grf');
+    moments = filterDataSet(moments, filterProp, rate, 'grf');         
+   
     
     if thresholdChannels
         % Clean-up the grf end point bleeding caused by the filter
