@@ -1,21 +1,18 @@
-function setC3d2OpensimPara( varargin )
+function fhelp = setC3d2OpensimPara( varargin )
 
 display(['number of parameters: ' num2str(nargin)]);
 
 
-for i = 1 : nargin
 
-    s = varargin(i)
+for i = 1 : nargin
     
-   
-    
-%     if char(s)
-        if ~isempty(strfind(char(s), 'help'))
-            display('works')
-        elseif i == nargin
-            display('doesnt work')
+    if ischar(varargin{i})
+        if ~isempty(strfind(varargin{i}, 'help'))
+         
+            fhelp = varargin{i+1};
+            
         end
-%     end
+    end
 end
     
 return
@@ -55,14 +52,15 @@ return
     
 % Draft input method to 
 %
-% c3d2OpenSim(path2file, ...
+% setC3d2OpensimPara(path2file, ...
 %             'rotation',{'x' 90}, ...
 %             'filter',  {'mks' 16 'crit' 'grf' 40 'crit'},...
 %             'body',    {'rFoot' 'RMT1' 'RMT2' 'RCAL'  },...
 %             'body',    {'lFoot' 'LMT1' 'LMT2' 'LCAL'  })
 %         
 %         
-% 
+% khelp = setC3d2OpensimPara('help', {'x' 90} )       
+
 % 
 % 
 % setC3d2OpensimPara(1)
