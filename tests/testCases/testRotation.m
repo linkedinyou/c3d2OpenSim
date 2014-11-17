@@ -1,10 +1,21 @@
 function testRotation
 
-warning('on')
 
-data1 = btk_loadc3d('E:\temp\c3dfiles\Lab1.c3d', 10);
-data2 = btk_loadc3d('E:\temp\c3dfiles\Lab2.c3d', 10);
-data3 = btk_loadc3d('E:\temp\c3dfiles\Lab3.c3d', 10);
+
+
+frame_position1 = [1 0 0;0 1 0;0 0 1]; 
+
+rotation = {'x' 90};
+rotated_position = rotateCoordinateSys(frame_position1, rotation);
+
+% should be [0 0 -1]
+frame_position1 = [1 0 0]
+rotation = {'z' 90};
+rotated_position = rotateCoordinateSys(frame_position1, rotation);
+
+
+
+
 
 %% data 1 
 
