@@ -205,6 +205,12 @@ ul {
   padding-left: 20px;
 }
 
+li
+{
+margin: 1em 0;
+}
+
+
 ol {
   list-style: decimal inside;
   padding-left: 20px;
