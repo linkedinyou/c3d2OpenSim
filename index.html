@@ -35,10 +35,7 @@
 
 <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+
 
 <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
 
@@ -55,9 +52,35 @@ $ git checkout gh-pages
 </ul>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Sebding inputs to the functions</h3>
 
 <p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+
+<pre><code>
+c3d2Opensim( 'c3dFilePath','C:\path2c3dFile\example.c3d', ...
+             'rotation', {'z' 90 'x' 90}, ...
+             'filter', {'mrks' 'butt' 16 'grf' 'critt' 40},...
+             'mrkList', {'LTH1' 'LTH2' 'RTH1' 'RTH2' 'RTH3'});
+</code></pre>
+
+<p>The below code block uses 'example2.c3d', rotates the data 90 degrees about X and filters the ground reaction forces with a butterworth filter at 40Hz. No marker filtering occurs and all markers are exported. </p>
+
+<pre><code>
+c3d2Opensim( 'c3dFilePath','C:\path2c3dFile\example2.c3d', ...
+             'rotation', {'x' 90}, ...
+             'filter', {'grf' 'butt' 40});
+</code></pre>
+
+<h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Limitations and known issues</h3>
+
+<ul style="list-style-type:circle">
+  <li>This has only been tested on Force platforms of type 2. The outputs of the forceplate must be 3 forces (fx,fy,fz) and three moments (mx,my,mz). If you have unsupported force plates, please post a request.</li>
+  <li>The c3d must have at least marker data in it. You don't need to have forces.
+  <li>The string 'static' in the name of the c3d file will skip any force processing and just generate a .trc.
+  <li>We don't process other types of analog data (EMG). This will be in a future release.</li>
+</ul>
+
 
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
