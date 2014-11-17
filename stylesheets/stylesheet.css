@@ -321,7 +321,7 @@ Full-Width Styles
 
 #downloads {
   position: absolute;
-  width: 210px;
+  width: 110px;
   z-index: 10;
   bottom: -40px;
   right: 0;
@@ -358,7 +358,6 @@ Full-Width Styles
 #footer_wrap {
   background: #212121;
 }
-
 
 
 /*******************************************************************************
@@ -414,3 +413,6 @@ Small Device Styles
   }
 
 }
+
+/* Some div classes
+*/
