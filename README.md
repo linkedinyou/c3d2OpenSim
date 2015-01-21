@@ -4,7 +4,7 @@ Matlab code for processing c3d motion data into OpenSim format.
 
 ### Quick Start
 
-- Download btk-c3d software and put in Matlab path.
+- Download btk-c3d software and put in your Matlab path.
 The matlab (64-bit tested) binaries can be downloaded from here; https://code.google.com/p/b-tk/wiki/MatlabBinaries
 
 - Download zip of this project. Unzip folder and put in Matlab Path.
