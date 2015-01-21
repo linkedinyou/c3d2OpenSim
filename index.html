@@ -43,9 +43,9 @@
 </ul>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Sending inputs to the functions</h3>
+<a name="Sending-inputs-to-the-function" class="anchor" href="#Sending-inputs-to-the-function"><span class="octicon octicon-link"></span></a>Sending inputs to the functions</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>Input arguments using the name (string) followed by the input variable. The below example uses the file 'example.c3d', rotates the data 90 degrees about Z then 90 degrees about X, filters the markers with a butterworth filter at 16Hz and the ground reaction forces with a critically damped filter at 40Hz, and only exports the markers named LTH1, LTH2, RTH1, RTH2, RTH3. </p>
 
 <pre><code>c3d2Opensim( 'c3dFilePath','C:\path2c3dFile\example.c3d', ...
              'rotation', {'z' 90 'x' 90}, ...
