@@ -39,7 +39,7 @@ for i = 1 : length(structData.fp_data.GRF_data)
         %Get the rand of noise for the first hundred frames
         zforceNoiseRange = range(forces(1:100,3));
         % Find when the fz forces are below this range
-        zeroFrames = find( forces(:,3) < zforceNoiseRange);
+        zeroFrames = find( forces(:,3) < 2*zforceNoiseRange);
         % zero the forces and momentswhen below that range
         forces(zeroFrames,:) = 0;
         moments(zeroFrames,:) = 0;
