@@ -44,14 +44,11 @@ end
 
 end    
 
-
-
 function [fpForces fpMoments] = flipAxisAround(globalForces, fpForces, fpMoments, rotateAround, axisCheck )
 
     rotation = [{rotateAround 90}];
     LoopCounter = 0;
-    while round(sum(globalForces(:,axisCheck))) ~= round(sum(fpForces(:,axisCheck)))
-        
+    while floor(rms(globalForces(:,axisCheck))) ~=  floor(rms(fpForces(:,axisCheck))) | sign(sum(globalForces(:,axisCheck))) ~= sign(sum(fpForces(:,axisCheck)))
         % Rotate the forces and moments by 
         [fpForces] = rotateCoordinateSys(fpForces, rotation);
         [fpMoments] = rotateCoordinateSys(fpMoments, rotation);
