@@ -25,36 +25,36 @@ for i = 1 : length(structData.fp_data.GRF_data)
     moments = structData.fp_data.GRF_data(i).M;
 
     % get the force and moment channel offset
-    forceOffSet  = mean(forces(1:100,:));
-    momentOffset = mean(moments(1:100,:));
-    
-    if zeroOffsets
-        % apply the offsets to the force and moment channels
-        forces = bsxfun(@minus, forces, forceOffSet);
-        moments= bsxfun(@minus, moments, momentOffset);
-    end
-    
-    
-    if thresholdChannels
-        %Get the rand of noise for the first hundred frames
-        zforceNoiseRange = range(forces(1:100,3));
-        % Find when the fz forces are below this range
-        zeroFrames = find( forces(:,3) < 2*zforceNoiseRange);
-        % zero the forces and momentswhen below that range
-        forces(zeroFrames,:) = 0;
-        moments(zeroFrames,:) = 0;
-    end
+%     forceOffSet  = mean(forces(1:100,:));
+%     momentOffset = mean(moments(1:100,:));
+%     
+%     if zeroOffsets
+%         % apply the offsets to the force and moment channels
+%         forces = bsxfun(@minus, forces, forceOffSet);
+%         moments= bsxfun(@minus, moments, momentOffset);
+%     end
+%     
+%     
+%     if thresholdChannels
+%         %Get the rand of noise for the first hundred frames
+%         zforceNoiseRange = range(forces(1:100,3));
+%         % Find when the fz forces are below this range
+%         zeroFrames = find( forces(:,3) < 2*zforceNoiseRange);
+%         % zero the forces and momentswhen below that range
+%         forces(zeroFrames,:) = 0;
+%         moments(zeroFrames,:) = 0;
+%     end
     
     % Filter the force and moment data
     forces  = filterDataSet(forces , filterProp, rate, 'grf');
     moments = filterDataSet(moments, filterProp, rate, 'grf');         
    
     
-    if thresholdChannels
-        % Clean-up the grf end point bleeding caused by the filter
-        forces(zeroFrames,:) = 0;
-        moments(zeroFrames,:) = 0;
-    end    
+%     if thresholdChannels
+%         % Clean-up the grf end point bleeding caused by the filter
+%         forces(zeroFrames,:) = 0;
+%         moments(zeroFrames,:) = 0;
+%     end    
     
     % Save the processed data back to the structure
     structData.fp_data.GRF_data(i).F = forces;
