@@ -21,28 +21,31 @@ for i = 1 : length(structData.fp_data.GRF_data)
     % define the forces that are expressed in the global frame
     globalForces = structData.fp_data.GRF_data(i).F;
     
-    % Rotate about one of the two axes that are in the plane of the floor.
-    % In the first case we rotate about the x axis, 90 degrees at a time, until
-    % the Z axes aline. 
-    [fpForcesRot fpMomentsRot] = flipAxisAround(globalForces,fpForces, fpMoments, 'x', 3 );
     
-    % Now that the Z axes aline, rotate about z until the x and Y components are both equal. 
-    [fpForcesRot fpMomentsRot] = flipAxisAround(globalForces,fpForcesRot, fpMomentsRot, 'z', 1 );
-    
-    structData.fp_data.GRF_data(i).F_original = structData.fp_data.GRF_data(i).F;
-    structData.fp_data.GRF_data(i).M_original = structData.fp_data.GRF_data(i).M;
+    if  structData.fp_data.FP_data(i).type == 3
+        display('Warning: Forceplate Type 3 detected, cannot rotate')
+    else
+        % Rotate about one of the two axes that are in the plane of the floor.
+        % In the first case we rotate about the x axis, 90 degrees at a time, until
+        % the Z axes aline. 
+        [fpForcesRot fpMomentsRot] = flipAxisAround(globalForces,fpForces, fpMoments, 'x', 3 );
 
-    % Save the rotated values back to the structure to be used in copCalc()
-    structData.fp_data.GRF_data(i).F = fpForcesRot;
-    structData.fp_data.GRF_data(i).M = fpMomentsRot;
-    
-    %       
-    %     hold on
-    %     plot(fpForces)
-    %     plot(fpForcesRot, '.')
+        % Now that the Z axes aline, rotate about z until the x and Y components are both equal. 
+        [fpForcesRot fpMomentsRot] = flipAxisAround(globalForces,fpForcesRot, fpMomentsRot, 'z', 1 );
+        
+        structData.fp_data.GRF_data(i).F_original = structData.fp_data.GRF_data(i).F;
+        structData.fp_data.GRF_data(i).M_original = structData.fp_data.GRF_data(i).M;
+
+        % Save the rotated values back to the structure to be used in copCalc()
+        structData.fp_data.GRF_data(i).F = fpForcesRot;
+        structData.fp_data.GRF_data(i).M = fpMomentsRot;
+    end
 end
 
 end    
+% 
+%  rotateAround = 'x'
+%  axisCheck = 3
 
 function [fpForces fpMoments] = flipAxisAround(globalForces, fpForces, fpMoments, rotateAround, axisCheck )
 
