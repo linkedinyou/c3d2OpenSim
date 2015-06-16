@@ -20,6 +20,12 @@ for i = 1 : nRot
     rotAxis = char(rotation(  i*2-1 ));
     Rot     = cell2mat(rotation( i*2 ));
     
+    if ischar(Rot)
+        a = '''x''';
+        b = '''z''';
+        error(['input rotation is incorrect; must indicate axis and the amount of rotation i.e. {' a ' 90 ' b ' 90 }']) 
+    end
+    
     % Create roation matrices according to Rot (degrees)   
     RotAboutX1 = [1,0,0;0,cos(Rot*pi/180),-(sin(Rot*pi/180));0,sin(Rot*pi/180),cos(Rot*pi/180)];
     RotAboutY1 = [cos(Rot*pi/180),0,sin(Rot*pi/180);0,1,0;-(sin(Rot*pi/180)),0,cos(Rot*pi/180)];
